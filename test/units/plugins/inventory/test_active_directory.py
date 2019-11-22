@@ -38,14 +38,13 @@ def inventory():
 def connection():
     current_dir = os.path.dirname(os.path.realpath(__file__))
     server = Server.from_definition('my_fake_server', os.path.join(current_dir,'test_active_directory_server_info.json'), os.path.join(current_dir,'test_active_directory_server_schema.json'))
-    connection = Connection(server, user='cn=vagrant,ou=users,ou=ansible,o=local', password='vagrant', client_strategy=MOCK_SYNC)
+    connection = Connection(server, user='cn=admin,ou=users,ou=ansible,o=local', password='s3cr3t', client_strategy=MOCK_SYNC)
     connection.strategy.entries_from_json(os.path.join(current_dir,'test_active_directory_server_data.json'))
     connection.bind()
     return connection
 
 @pytest.fixture(scope="module")
 def domain_controller_computer_object(connection):
-    obj_computer = ObjectDef('computer', connection)
     connection.search(search_base='OU=Domain Controllers,DC=ansible,DC=local', search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem', 'DNSHostName', 'name'])
     return connection.entries[0]
 
@@ -90,6 +89,14 @@ def test_computer_object_inventory_hostname_should_default_to_dns_hostname_attri
 
 def test_computer_object_inventory_hostname_using_name_attribute(inventory, domain_controller_computer_object):
     assert inventory._get_hostname(domain_controller_computer_object, hostnames=['name']) == 'DC'
+
+def test_query_domain_controllers_organizational_unit(inventory, connection):
+    assert len(inventory._query(connection, 'OU=Domain Controllers,DC=ansible,DC=local')) == 1
+
+def test_query_invalid_path_should_raise_error(inventory, connection):
+    with pytest.raises(AnsibleError):
+        inventory._query(connection=connection, path='UNKNOWN-PATH')
+        assert "could not retrieve computer objects" in error_message
 
 def test_loading_computer_objects_using_simple_organizational_unit(inventory):
     pass

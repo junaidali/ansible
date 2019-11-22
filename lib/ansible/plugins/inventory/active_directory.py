@@ -109,7 +109,8 @@ from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cachea
 from ansible.utils.display import Display
 
 try:
-    from ldap3 import Server, ServerPool, Connection, ALL
+    from ldap3 import Server, ServerPool, Connection, ALL, SUBTREE, BASE
+    from ldap3.core.exceptions import LDAPException
 except ImportError:
     raise AnsibleError('the active_directory dynamic inventory plugin requires ldap3')
 
@@ -160,8 +161,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       else:
         server = Server(host=self.domain_controllers)
       
-      connection = Connection(server=server, user=self.user_name, password=self.user_password)
-      connection.bind()
+      connection = Connection(server=server, user=self.user_name, password=self.user_password, auto_bind=True)
       return connection
 
     def _query(self, connection, path, no_subtree=False):
@@ -171,7 +171,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       :param path: the ldap path to query
       :param no_subtree: limit search to path only, do not include subtree
       """
-      pass
+      search_scope = BASE if no_subtree else SUBTREE
+      try:
+        connection.search(search_base=path, search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem', 'DNSHostName', 'name'], search_scope=search_scope)
+      except LDAPException as err:
+        raise AnsibleError('could not retrieve computer objects %s', err)
+      return connection.entries
 
     def _get_hostname(self, entry, hostnames):
       """
@@ -192,6 +197,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       
       return to_text(hostname)
 
+    def _populate(self, groups, hostnames):
+      for group in groups:
+        group = self.inventory.add_group(group)
+        self._add_hosts(hosts=groups[group], group=group, hostnames=hostnames)
+        self.inventory.add_child('all', group)
+
     def verify_file(self, path):
         """
             :param loader: an ansible.parsing.dataloader.DataLoader object
@@ -211,3 +222,28 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         super(InventoryModule, self).parse(inventory, loader, path)
 
         self._read_config_data(path)
+
+        cache_key = self.get_cache_key(path)
+        # false when refresh_cache or --flush-cache is used
+        if cache:
+            # get the user-specified directive
+            cache = self.get_option('cache')
+
+        # Generate inventory
+        cache_needs_update = False
+        if cache:
+            try:
+                results = self._cache[cache_key]
+            except KeyError:
+                # if cache expires or cache file doesn't exist
+                cache_needs_update = True
+
+        if not cache or cache_needs_update:
+            results = self._query(regions, filters, strict_permissions)
+
+        self._populate(results, hostnames)
+
+        # If the cache has expired/doesn't exist or if refresh_inventory/flush cache is used
+        # when the user is using caching, update the cached inventory
+        if cache_needs_update or (not cache and self.get_option('cache')):
+            self._cache[cache_key] = results
