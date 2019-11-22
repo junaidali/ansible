@@ -37,9 +37,9 @@ def inventory():
 @pytest.fixture(scope="module")
 def connection():
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    server = Server.from_definition('my_fake_server', os.path.join(current_dir,'test_active_directory_server_info.json'), os.path.join(current_dir,'test_active_directory_server_schema.json'))
+    server = Server.from_definition('my_fake_server', os.path.join(current_dir, 'fixtures', 'test_active_directory_server_info.json'), os.path.join(current_dir, 'fixtures', 'test_active_directory_server_schema.json'))
     connection = Connection(server, user='cn=admin,ou=users,ou=ansible,o=local', password='s3cr3t', client_strategy=MOCK_SYNC)
-    connection.strategy.entries_from_json(os.path.join(current_dir,'test_active_directory_server_data.json'))
+    connection.strategy.entries_from_json(os.path.join(current_dir, 'fixtures', 'test_active_directory_server_data.json'))
     connection.bind()
     return connection
 
@@ -98,9 +98,8 @@ def test_query_invalid_path_should_raise_error(inventory, connection):
         inventory._query(connection=connection, path='UNKNOWN-PATH')
         assert "could not retrieve computer objects" in error_message
 
-def test_loading_computer_objects_using_simple_organizational_unit(inventory):
-    pass
+def test_loading_computer_objects_using_simple_organizational_unit(inventory, connection):
+    assert len(inventory._query(connection=connection, path='OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local')) == 5
 
-
-def test_loading_computer_objects_using_nested_organizational_unit(inventory):
-    pass
+def test_loading_computer_objects_using_nested_organizational_unit(inventory, connection):
+    assert len(inventory._query(connection=connection, path='OU=Servers,OU=Devices,DC=ansible,DC=local')) == 25

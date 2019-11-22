@@ -73,8 +73,8 @@ plugin: active_directory
 domain_controllers:
   - dc1.ansible.local
 organizational_units:
-  - servers
-  - desktops
+  - ou=servers,dc=ansible,dc=local
+  - ou=desktops,dc=ansible,dc=local
 username: DOMAIN\\username
 password: sup3rs3cr3t
 
@@ -83,8 +83,8 @@ plugin: active_directory
 domain_controllers:
   - dc1.ansible.local
 organizational_units:
-  - servers
-  - desktops
+  - ou=servers,dc=ansible,dc=local
+  - ou=desktops,dc=ansible,dc=local
 last_activity: 30
 username: DOMAIN\\username
 password: sup3rs3cr3t
@@ -94,8 +94,8 @@ plugin: active_directory
 domain_controllers:
   - dc1.ansible.local
 organizational_units:
-  - servers
-  - desktops
+  - ou=servers,dc=ansible,dc=local
+  - ou=desktops,dc=ansible,dc=local
 import_disabled: true
 username: DOMAIN\\username
 password: sup3rs3cr3t
@@ -109,7 +109,7 @@ from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cachea
 from ansible.utils.display import Display
 
 try:
-    from ldap3 import Server, ServerPool, Connection, ALL, SUBTREE, BASE
+    from ldap3 import Server, ServerPool, Connection, ALL, SUBTREE, BASE, ALL_ATTRIBUTES
     from ldap3.core.exceptions import LDAPException
 except ImportError:
     raise AnsibleError('the active_directory dynamic inventory plugin requires ldap3')
@@ -173,7 +173,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       """
       search_scope = BASE if no_subtree else SUBTREE
       try:
-        connection.search(search_base=path, search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem', 'DNSHostName', 'name'], search_scope=search_scope)
+        connection.search(search_base=path, search_filter='(objectclass=computer)', attributes=ALL_ATTRIBUTES, search_scope=search_scope)
       except LDAPException as err:
         raise AnsibleError('could not retrieve computer objects %s', err)
       return connection.entries
@@ -197,9 +197,13 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       
       return to_text(hostname)
 
-    def _populate(self, groups, hostnames):
-      for group in groups:
-        group = self.inventory.add_group(group)
+    def _populate(self, entries):
+      """
+      populates ansible inventory with active directory entries
+      :param entries: ldap entries list
+      """
+      for entry in entries:
+        hostname = self._get_hostname(entry)
         self._add_hosts(hosts=groups[group], group=group, hostnames=hostnames)
         self.inventory.add_child('all', group)
 
@@ -223,6 +227,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         self._read_config_data(path)
 
+        self._set_credentials()
+
+        organizational_units_to_search = self.get_option('organizational_units')
+
+        connection = self._ldap3_conn()
+
         cache_key = self.get_cache_key(path)
         # false when refresh_cache or --flush-cache is used
         if cache:
@@ -239,9 +249,9 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 cache_needs_update = True
 
         if not cache or cache_needs_update:
-            results = self._query(regions, filters, strict_permissions)
-
-        self._populate(results, hostnames)
+          for organizational_unit in organizational_units_to_search:
+            results = self._query(connection, organizational_unit)
+            self._populate(results)
 
         # If the cache has expired/doesn't exist or if refresh_inventory/flush cache is used
         # when the user is using caching, update the cached inventory
