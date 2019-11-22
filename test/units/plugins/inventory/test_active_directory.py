@@ -78,6 +78,7 @@ def test_loading_computer_objects_from_domain_controllers_organizational_unit(in
     assert len(connection.entries) == 1
     assert connection.entries[0].entry_dn == 'CN=DC,OU=Domain Controllers,DC=ansible,DC=local'
     assert isinstance(connection.entries[0].lastLogonTimestamp.value, datetime.datetime)
+    assert connection.entries[0].operatingSystem == 'Windows Server 2016 Standard Evaluation'
 
 def test_loading_computer_objects_using_simple_organizational_unit(inventory):
     pass
