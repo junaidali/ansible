@@ -164,6 +164,34 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       connection.bind()
       return connection
 
+    def _query(self, connection, path, no_subtree=False):
+      """
+      queries active directory and returns records
+      :param connection: the ldap3 connection object
+      :param path: the ldap path to query
+      :param no_subtree: limit search to path only, do not include subtree
+      """
+      pass
+
+    def _get_hostname(self, entry, hostnames):
+      """
+      :param entry: a ldap3 entry object returned by ldap3 search
+      :param hostnames: a list of hostname destination variables in order of preference
+      :return the preferred identifer for the host
+      """
+      if not hostnames:
+        hostnames = ['dNSHostName', 'name']
+      
+      hostname = None
+      for preference in hostnames:
+        try:
+          hostname = entry[preference]
+          break
+        except:
+          pass
+      
+      return to_text(hostname)
+
     def verify_file(self, path):
         """
             :param loader: an ansible.parsing.dataloader.DataLoader object

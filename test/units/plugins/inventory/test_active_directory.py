@@ -43,6 +43,12 @@ def connection():
     connection.bind()
     return connection
 
+@pytest.fixture(scope="module")
+def domain_controller_computer_object(connection):
+    obj_computer = ObjectDef('computer', connection)
+    connection.search(search_base='OU=Domain Controllers,DC=ansible,DC=local', search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem', 'DNSHostName', 'name'])
+    return connection.entries[0]
+
 def test_set_credentials(inventory):
     inventory._options = {
         'username': 'ANSIBLETEST\\Administrator',
@@ -72,14 +78,18 @@ def test_missing_domain_controllers_list(inventory):
         inventory._set_credentials()
         assert "domain controllers list is empty" in error_message
 
-def test_loading_computer_objects_from_domain_controllers_organizational_unit(inventory, connection):
-    obj_computer = ObjectDef('computer', connection)
-    connection.search(search_base='OU=Domain Controllers,DC=ansible,DC=local', search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem', 'DNSHostName'])
-    assert len(connection.entries) == 1
-    assert connection.entries[0].entry_dn == 'CN=DC,OU=Domain Controllers,DC=ansible,DC=local'
-    assert isinstance(connection.entries[0].lastLogonTimestamp.value, datetime.datetime)
-    assert connection.entries[0].operatingSystem == 'Windows Server 2016 Standard Evaluation'
-    assert connection.entries[0].DNSHostName == 'dc.ansible.local'
+def test_loading_computer_objects_from_domain_controllers_organizational_unit(domain_controller_computer_object):
+    assert domain_controller_computer_object.entry_dn == 'CN=DC,OU=Domain Controllers,DC=ansible,DC=local'
+    assert isinstance(domain_controller_computer_object.lastLogonTimestamp.value, datetime.datetime)
+    assert domain_controller_computer_object.operatingSystem == 'Windows Server 2016 Standard Evaluation'
+    assert domain_controller_computer_object.DNSHostName == 'dc.ansible.local'
+    assert domain_controller_computer_object.name == 'DC'
+
+def test_computer_object_inventory_hostname_should_default_to_dns_hostname_attribute(inventory, domain_controller_computer_object):
+    assert inventory._get_hostname(domain_controller_computer_object, hostnames=None) == 'dc.ansible.local'
+
+def test_computer_object_inventory_hostname_using_name_attribute(inventory, domain_controller_computer_object):
+    assert inventory._get_hostname(domain_controller_computer_object, hostnames=['name']) == 'DC'
 
 def test_loading_computer_objects_using_simple_organizational_unit(inventory):
     pass
