@@ -10,7 +10,8 @@ import datetime
 
 from ansible.plugins.inventory.active_directory import InventoryModule
 from ansible.errors import AnsibleError
-from ldap3 import Server, Connection, MOCK_SYNC
+from ldap3 import Server, Connection, ALL, MOCK_SYNC, ObjectDef, AttrDef, OFFLINE_AD_2012_R2
+import os
 
 config_data = {
     "plugin": "active_directory",
@@ -35,11 +36,11 @@ def inventory():
 
 @pytest.fixture(scope="module")
 def connection():
-    server = Server('my_fake_server')
-    connection = Connection(server, user='cn=my_user,ou=ansible,o=local', password='my_password', client_strategy=MOCK_SYNC)
-    connection.strategy.add_entry('CN=dc1,OU=Domain Controllers,DC=ansible,DC=local', {'objectclass': 'computer', 'lastLogonTimestamp' : '2019-11-11 16:18:36.191551+00:00', 'operatingSystem': 'Windows Server 2016 Datacenter' })
-    connection.strategy.add_entry('CN=dc2,OU=Domain Controllers,DC=ansible,DC=local', {'objectclass': 'computer', 'lastLogonTimestamp' : '2019-11-11 16:18:36.191551+00:00', 'operatingSystem': 'Windows Server 2016 Datacenter' })
-    connection.open()
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    server = Server.from_definition('my_fake_server', os.path.join(current_dir,'test_active_directory_server_info.json'), os.path.join(current_dir,'test_active_directory_server_schema.json'))
+    connection = Connection(server, user='cn=vagrant,ou=users,ou=ansible,o=local', password='vagrant', client_strategy=MOCK_SYNC)
+    connection.strategy.entries_from_json(os.path.join(current_dir,'test_active_directory_server_data.json'))
+    connection.bind()
     return connection
 
 def test_set_credentials(inventory):
@@ -71,11 +72,12 @@ def test_missing_domain_controllers_list(inventory):
         inventory._set_credentials()
         assert "domain controllers list is empty" in error_message
 
-def test_loading_computer_objects_using_root(inventory, connection):
-    connection.search(search_base='DC=ansible,DC=local', search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem'])
-    assert len(connection.entries) == 2
-    assert connection.entries[0].entry_dn in ['CN=dc1,OU=Domain Controllers,DC=ansible,DC=local', 'CN=dc2,OU=Domain Controllers,DC=ansible,DC=local']
-    assert connection.entries[0].lastLogonTimestamp == '2019-11-11 16:18:36.191551+00:00'
+def test_loading_computer_objects_from_domain_controllers_organizational_unit(inventory, connection):
+    obj_computer = ObjectDef('computer', connection)
+    connection.search(search_base='OU=Domain Controllers,DC=ansible,DC=local', search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem'])
+    assert len(connection.entries) == 1
+    assert connection.entries[0].entry_dn == 'CN=DC,OU=Domain Controllers,DC=ansible,DC=local'
+    assert isinstance(connection.entries[0].lastLogonTimestamp.value, datetime.datetime)
 
 def test_loading_computer_objects_using_simple_organizational_unit(inventory):
     pass
