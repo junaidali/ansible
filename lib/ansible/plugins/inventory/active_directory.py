@@ -108,6 +108,8 @@ from ansible.module_utils._text import to_native, to_text
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable
 from ansible.utils.display import Display
 
+display = Display()
+
 try:
     from ldap3 import Server, ServerPool, Connection, ALL, SUBTREE, BASE, ALL_ATTRIBUTES
     from ldap3.core.exceptions import LDAPException
@@ -124,6 +126,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       super(InventoryModule, self).__init__()
 
       # credentials
+      display.vvvv('initializing active_directory inventory plugin')
       self.user_name = None
       self.user_password = None
       self.domain_controllers = []
@@ -132,6 +135,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       """
       :param config_data: contents of the inventory config file
       """
+      display.vvvv('setting credentials')
       try:
         self.user_name = self.get_option('username')
       except:
@@ -147,21 +151,28 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       except:
         raise AnsibleError('domain controllers list is empty')
 
+      display.vvvv('credentials: username - ' + self.user_name)
+
     def _ldap3_conn(self):
       """
       establishes an ldap connection and returns the connection object
       """
+      display.vvvv('initializing ldap connection')
       if self.user_name == None or self.user_password == None:
         raise AnsibleError('insufficient credentials found')
 
-      if isinstance(self.domain_controllers, list):
+      if len(self.domain_controllers) > 1:
+        display.vvvv('creating server connection pool to %s' % self.domain_controllers)
         server = ServerPool()
         for dc in self.domain_controllers:
           server.add(dc)
       else:
-        server = Server(host=self.domain_controllers)
-      
-      connection = Connection(server=server, user=self.user_name, password=self.user_password, auto_bind=True)
+        server = Server(host=self.domain_controllers[0])
+        display.vvvv('creating single server connection to %s' % server)
+      try:
+        connection = Connection(server=server, user=self.user_name, password=self.user_password, auto_bind=True)
+      except LDAPException as err:
+        raise AnsibleError("could not connect to domain controller")
       return connection
 
     def _query(self, connection, path, no_subtree=False):
@@ -171,14 +182,17 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       :param path: the ldap path to query
       :param no_subtree: limit search to path only, do not include subtree
       """
+      display.vvvv('running search query to find computers at path ' + path)
       search_scope = BASE if no_subtree else SUBTREE
       try:
         connection.search(search_base=path, search_filter='(objectclass=computer)', attributes=ALL_ATTRIBUTES, search_scope=search_scope)
       except LDAPException as err:
         raise AnsibleError('could not retrieve computer objects %s', err)
+      display.vvvv('total ' + str(len(connection.response)) + ' entries retrieved')
+      #display.vvvv('total ' + len(connection.entries) + ' entries retrieved')
       return connection.entries
 
-    def _get_hostname(self, entry, hostnames):
+    def _get_hostname(self, entry, hostnames=None):
       """
       :param entry: a ldap3 entry object returned by ldap3 search
       :param hostnames: a list of hostname destination variables in order of preference
@@ -204,8 +218,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       """
       for entry in entries:
         hostname = self._get_hostname(entry)
-        self._add_hosts(hosts=groups[group], group=group, hostnames=hostnames)
-        self.inventory.add_child('all', group)
+        self.inventory.add_host(hostname)
 
     def verify_file(self, path):
         """
@@ -216,7 +229,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         if super(InventoryModule, self).verify_file(path):
             if path.endswith(("active_directory.yml", "active_directory.yaml")):
                 return True
-        display.debug(
+        display.vvvv(
             "active_directory inventory filename must end with 'active_directory.yml' or 'active_directory.yaml'"
         )
         return False
