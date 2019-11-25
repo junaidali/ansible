@@ -27,6 +27,10 @@ DOCUMENTATION = """
           description: The active directory user's password used for querying computer objects
           type: string
           required: True
+        use_ssl: 
+          description: The LDAP connection to active directory domain controllers uses SSL by default. If you have a need to disable SSL for troubleshooting purposes you can disable it by setting this parameter to no. It is highly recommended to use SSL to protect your credential over the wire.
+          type: boolean
+          default: yes
         domain_controllers:
           description: The list of domain controllers used for querying computer information
           type: list
@@ -130,6 +134,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       self.user_name = None
       self.user_password = None
       self.domain_controllers = []
+      self.use_ssl = True
     
     def _set_credentials(self):
       """
@@ -151,6 +156,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       except:
         raise AnsibleError('domain controllers list is empty')
 
+      try:
+        self.use_ssl = self.get_option('use_ssl')
+      except:
+        pass
+
       display.vvvv('credentials: username - ' + self.user_name)
 
     def _ldap3_conn(self):
@@ -169,7 +179,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       elif len(self.domain_controllers) == 1:
         display.vvvv('creating single server connection to %s' % self.domain_controllers[0])
         try:
-          server = Server(host=self.domain_controllers[0], use_ssl=True)
+          server = Server(host=self.domain_controllers[0], use_ssl=self.use_ssl)
         except:
           raise AnsibleError("could not establish connection to domain controller")
       else:
