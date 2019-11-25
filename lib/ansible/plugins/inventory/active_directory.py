@@ -166,9 +166,15 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         server = ServerPool()
         for dc in self.domain_controllers:
           server.add(dc)
+      elif len(self.domain_controllers) == 1:
+        display.vvvv('creating single server connection to %s' % self.domain_controllers[0])
+        try:
+          server = Server(host=self.domain_controllers[0], use_ssl=True)
+        except:
+          raise AnsibleError("could not establish connection to domain controller")
       else:
-        server = Server(host=self.domain_controllers[0])
-        display.vvvv('creating single server connection to %s' % server)
+        raise AnsibleError("no domain controller specified")
+      display.vvvv('initializing connection using server url %s' % server)
       try:
         connection = Connection(server=server, user=self.user_name, password=self.user_password, auto_bind=True)
       except LDAPException as err:
