@@ -175,7 +175,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         display.vvvv('creating server connection pool to %s' % self.domain_controllers)
         server = ServerPool()
         for dc in self.domain_controllers:
-          server.add(dc)
+          server.add(Server(host=dc, use_ssl=self.use_ssl))
       elif len(self.domain_controllers) == 1:
         display.vvvv('creating single server connection to %s' % self.domain_controllers[0])
         try:
