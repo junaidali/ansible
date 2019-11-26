@@ -343,7 +343,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         for entry in entries:
             display.debug("processing entry %s" % entry)
             hostname = self._get_hostname(entry)
-            # check last logon timestamp to see if account is enabled
+            # use userAccountControl flag to check if the computer is enabled or not. 
+            # As per https://support.microsoft.com/en-us/help/305144/how-to-use-useraccountcontrol-to-manipulate-user-account-properties
+            # Typical user : 0x200 (512)
+            # Domain controller : 0x82000 (532480)
+            # Workstation/server: 0x1000 (4096)
+            # ACCOUNTDISABLE: 0x0002 (2)
             if (
                 entry["userAccountControl"] in [4098, 532482]
                 and self.import_disabled == False
