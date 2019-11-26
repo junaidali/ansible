@@ -244,10 +244,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       result = []
       if search_ou in entry_dn:
         display.debug('parsing %s' % entry_dn)
-        parent_group = search_ou.split(',')[0].split('=')[1]
-        result.append(to_text(parent_group))
+        if not re.match('^DC=', search_ou):
+          parent_group = search_ou.split(',')[0].split('=')[1]
+          result.append(to_text(parent_group))
         dn_without_search_ou = entry_dn.split(search_ou)[0].strip(',')
-        
         display.debug('processing dn_without_search_ou %s' % dn_without_search_ou)
         for count, node in enumerate(dn_without_search_ou.split(',')):
           display.debug('processing node %s' % node)
@@ -261,6 +261,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
           count += 1
       else:
         raise AnsibleError('%s does not exists in %s' % (search_ou, entry_dn))
+      result.reverse()
       display.debug('returning result %s' % result)
       return result
 
@@ -272,28 +273,34 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       display.debug('creating all inventory group')
       self.inventory.add_group('all')
       for entry in entries:
+        display.debug('processing entry %s' % entry)
         hostname = self._get_hostname(entry)
-        groups = self._get_inventory_group_names_from_computer_distinguished_name(entry.entry_dn, organizational_unit)
-        for count, group in enumerate(groups, start=0):
-          display.debug('%d. processing group %s' %(count, group))
-          new_group_name = ''
-          if count == 0:
-            parent_group_name = self._get_safe_group_name(groups[0])
-            display.debug('adding group %s under all' %(parent_group_name))
-            self.inventory.add_group(parent_group_name)
-            self.inventory.add_child('all', parent_group_name)
-            new_group_name = parent_group_name
-          else:
-            parent_group_name = self._get_safe_group_name('-'.join(groups[0:count]))
-            display.debug('creating parent group %s' % parent_group_name)
-            new_group_name = self._get_safe_group_name(parent_group_name + '_' + group)
-            display.debug('adding %s to %s' %(new_group_name, parent_group_name))
-            self.inventory.add_group(new_group_name)
-            self.inventory.add_child(parent_group_name, new_group_name)
-            
-          # add host to leaf ou
-          if count == len(groups)-1:
-            self.inventory.add_host(hostname, group=new_group_name)
+        # check last logon timestamp to see if account is enabled
+        if entry['userAccountControl'] in [4098, 532482]:
+          display.vvvv('Ignoring %s as it is currently disabled' %(hostname))
+        else:
+          groups = self._get_inventory_group_names_from_computer_distinguished_name(entry.entry_dn, organizational_unit)
+          for count, group in enumerate(groups, start=0):
+            display.debug('%d. processing group %s' %(count, group))
+            new_group_name = ''
+            if count == 0:
+              parent_group_name = self._get_safe_group_name(groups[0])
+              display.debug('adding group %s under all' %(parent_group_name))
+              self.inventory.add_group(parent_group_name)
+              self.inventory.add_child('all', parent_group_name)
+              new_group_name = parent_group_name
+            else:
+              parent_group_name = self._get_safe_group_name('-'.join(groups[0:count]))
+              display.debug('creating parent group %s' % parent_group_name)
+              new_group_name = self._get_safe_group_name(parent_group_name + '_' + group)
+              display.debug('adding %s to %s' %(new_group_name, parent_group_name))
+              self.inventory.add_group(new_group_name)
+              self.inventory.add_child(parent_group_name, new_group_name)
+              
+            # add host to leaf ou
+            if count == len(groups)-1:
+              self.inventory.add_host(hostname, group=new_group_name)
+              display.vvvv('%s added to inventory group %s' %(hostname, new_group_name))
 
     def verify_file(self, path):
         """

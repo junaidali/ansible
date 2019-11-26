@@ -135,5 +135,14 @@ def test_get_inventory_group_names_from_computer_distinguished_name_with_nesting
     search_base_ou = "OU=Servers,OU=Devices,DC=ansible,DC=local"
     groups = inventory._get_inventory_group_names_from_computer_distinguished_name(entry_dn, search_base_ou)
     assert len(groups) == 2
-    assert groups[0] == "Servers"
-    assert groups[1] == "servers-ou-1"
+    assert groups[1] == "Servers"
+    assert groups[0] == "servers-ou-1"
+
+def test_get_inventory_group_names_from_computer_distinguished_name_for_domain_root(inventory):
+    entry_dn = "CN=server-001,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+    search_base_ou = "DC=ansible,DC=local"
+    groups = inventory._get_inventory_group_names_from_computer_distinguished_name(entry_dn, search_base_ou)
+    assert len(groups) == 3
+    assert groups[0] == "Devices"
+    assert groups[1] == "Servers"
+    assert groups[2] == "servers-ou-1"
