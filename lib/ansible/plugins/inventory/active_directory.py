@@ -106,6 +106,7 @@ password: sup3rs3cr3t
 """
 
 import re
+from datetime import datetime, timezone
 
 from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_native, to_text
@@ -135,8 +136,9 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       self.user_password = None
       self.domain_controllers = []
       self.use_ssl = True
+      self.last_activity = 30
     
-    def _set_credentials(self):
+    def _init_data(self):
       """
       :param config_data: contents of the inventory config file
       """
@@ -158,6 +160,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
       try:
         self.use_ssl = self.get_option('use_ssl')
+      except:
+        pass
+
+      try:
+        self.last_activity = self.get_option('last_activity')
       except:
         pass
 
@@ -278,6 +285,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         # check last logon timestamp to see if account is enabled
         if entry['userAccountControl'] in [4098, 532482]:
           display.vvvv('Ignoring %s as it is currently disabled' %(hostname))
+        elif 'lastLogonTimestamp' in entry and abs((datetime.now(timezone.utc) - entry['lastLogonTimestamp'].values[0]).days) > self.last_activity:
+          display.vvvv('Ignoring %s as its lastLogonTimestamp of %s is past the %d day(s) threshold' %(hostname, entry['lastLogonTimestamp'], self.last_activity))
         else:
           groups = self._get_inventory_group_names_from_computer_distinguished_name(entry.entry_dn, organizational_unit)
           for count, group in enumerate(groups, start=0):
@@ -322,7 +331,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         self._read_config_data(path)
 
-        self._set_credentials()
+        self._init_data()
 
         organizational_units_to_search = self.get_option('organizational_units')
 

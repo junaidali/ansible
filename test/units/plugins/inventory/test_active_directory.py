@@ -48,13 +48,13 @@ def domain_controller_computer_object(connection):
     connection.search(search_base='OU=Domain Controllers,DC=ansible,DC=local', search_filter='(objectclass=computer)', attributes=['lastLogonTimestamp', 'operatingSystem', 'DNSHostName', 'name'])
     return connection.entries[0]
 
-def test_set_credentials(inventory):
+def test_read_config_data(inventory):
     inventory._options = {
         'username': 'ANSIBLETEST\\Administrator',
         'password': 'sup3rs3cr3t!',
         'domain_controllers': ['dc1.ansible.local', 'dc1.ansible.local']
     }
-    inventory._set_credentials()
+    inventory._init_data()
     assert inventory.user_name == 'ANSIBLETEST\\Administrator'
     assert inventory.user_password == 'sup3rs3cr3t!'
     assert inventory.domain_controllers == ['dc1.ansible.local', 'dc1.ansible.local']
@@ -65,7 +65,7 @@ def test_insufficient_credentials(inventory):
         'domain_controllers': ['dc1.ansible.local', 'dc1.ansible.local']
     }
     with pytest.raises(AnsibleError) as error_message:
-        inventory._set_credentials()
+        inventory._init_data()
         assert "insufficient credentials found" in error_message
 
 def test_missing_domain_controllers_list(inventory):
@@ -74,7 +74,7 @@ def test_missing_domain_controllers_list(inventory):
         'password': 'sup3rs3cr3t!'
     }
     with pytest.raises(AnsibleError) as error_message:
-        inventory._set_credentials()
+        inventory._init_data()
         assert "domain controllers list is empty" in error_message
 
 def test_loading_computer_objects_from_domain_controllers_organizational_unit(domain_controller_computer_object):
