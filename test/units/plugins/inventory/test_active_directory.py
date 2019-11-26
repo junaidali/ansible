@@ -230,8 +230,8 @@ def test_get_inventory_group_names_from_computer_distinguished_name_with_nesting
         entry_dn, search_base_ou
     )
     assert len(groups) == 2
-    assert groups[1] == "Servers"
-    assert groups[0] == "servers-ou-1"
+    assert groups[0] == "Servers"
+    assert groups[1] == "servers-ou-1"
 
 
 def test_get_inventory_group_names_from_computer_distinguished_name_for_domain_root(
@@ -246,3 +246,41 @@ def test_get_inventory_group_names_from_computer_distinguished_name_for_domain_r
     assert groups[0] == "Devices"
     assert groups[1] == "Servers"
     assert groups[2] == "servers-ou-1"
+
+
+def test_get_inventory_group_names_from_computer_security_groups_empty_group(inventory):
+    security_groups = []
+    assert (
+        len(
+            inventory._get_inventory_group_names_from_computer_security_groups(
+                security_groups
+            )
+        )
+        == 0
+    )
+
+
+def test_get_inventory_group_names_from_computer_security_groups_one_group(inventory):
+    security_groups = [
+        "CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=ansible,DC=local"
+    ]
+    inventory_groups = inventory._get_inventory_group_names_from_computer_security_groups(
+        security_groups
+    )
+    assert len(inventory_groups) == 1
+    assert inventory_groups[0] == "Pre-Windows 2000 Compatible Access"
+
+
+def test_get_inventory_group_names_from_computer_security_groups_multiple_group(
+    inventory,
+):
+    security_groups = [
+        "CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=ansible,DC=local",
+        "CN=Cert Publishers,CN=Users,DC=ansible,DC=local",
+    ]
+    inventory_groups = inventory._get_inventory_group_names_from_computer_security_groups(
+        security_groups
+    )
+    assert len(inventory_groups) == 2
+    assert inventory_groups[0] == "Pre-Windows 2000 Compatible Access"
+    assert inventory_groups[1] == "Cert Publishers"

@@ -55,6 +55,14 @@ DOCUMENTATION = """
           description: Imports computer groups as ansible inventory host groups
           type: boolean
           default: false
+        import_organizational_units_as_inventory_groups:
+          description: 
+            - Imports organizational units as inventory groups
+            - based on the organizational_units list specified, it creates the top level OU as the top level inventory group
+            - e.g. if the organizational_units list contains "OU=Devices,DC=ansible,DC=local" there would be an inventory group "Devices" containing all the computer objects.
+            - Nested OU's are supported and will be created as nested inventory groups
+          type: boolean
+          default: true
 """
 
 EXAMPLES = """
@@ -137,6 +145,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         self.user_password = None
         self.domain_controllers = []
         self.use_ssl = True
+        self.import_organizational_units_as_inventory_groups = True
         self.last_activity = 30
         self.import_disabled = False
         self.import_computer_groups = False
@@ -163,6 +172,13 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         try:
             self.use_ssl = self.get_option("use_ssl")
+        except:
+            pass
+
+        try:
+            self.import_organizational_units_as_inventory_groups = self.get_option(
+                "import_organizational_units_as_inventory_groups"
+            )
         except:
             pass
 
@@ -271,6 +287,17 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         sanitized_name = re.sub("\\s", "_", sanitized_name)
         return sanitized_name.lower()
 
+    def _get_inventory_group_names_from_computer_security_groups(self, security_groups):
+        """
+        converts active directory group names to ansible inventory group names
+        :param security_groups: list of active directory security group names
+        """
+        result = []
+        for group in security_groups:
+            display.debug("processing security group %s" % group)
+            result.append(to_text(group.split(",")[0].split("=")[1]))
+        return result
+
     def _get_inventory_group_names_from_computer_distinguished_name(
         self, entry_dn, search_ou
     ):
@@ -301,7 +328,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 count += 1
         else:
             raise AnsibleError("%s does not exists in %s" % (search_ou, entry_dn))
-        result.reverse()
+        if re.match("^DC=", search_ou):
+            result.reverse()
         display.debug("returning result %s" % result)
         return result
 
@@ -350,26 +378,52 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                         self.inventory.add_group(parent_group_name)
                         self.inventory.add_child("all", parent_group_name)
                         new_group_name = parent_group_name
+                        if (
+                            self.import_organizational_units_as_inventory_groups
+                            == False
+                            or len(organizational_unit_groups) == 1
+                        ):
+                            self.inventory.add_host(hostname, group=new_group_name)
+                            display.vvvv(
+                                "%s added to inventory group %s"
+                                % (hostname, new_group_name)
+                            )
                     else:
-                        parent_group_name = self._get_safe_group_name(
-                            "-".join(organizational_unit_groups[0:count])
-                        )
-                        display.debug("creating parent group %s" % parent_group_name)
-                        new_group_name = self._get_safe_group_name(
-                            parent_group_name + "_" + group
-                        )
-                        display.debug(
-                            "adding %s to %s" % (new_group_name, parent_group_name)
-                        )
-                        self.inventory.add_group(new_group_name)
-                        self.inventory.add_child(parent_group_name, new_group_name)
+                        if self.import_organizational_units_as_inventory_groups == True:
+                            parent_group_name = self._get_safe_group_name(
+                                "-".join(organizational_unit_groups[0:count])
+                            )
+                            display.debug(
+                                "creating parent group %s" % parent_group_name
+                            )
+                            new_group_name = self._get_safe_group_name(
+                                parent_group_name + "_" + group
+                            )
+                            display.debug(
+                                "adding %s to %s" % (new_group_name, parent_group_name)
+                            )
+                            self.inventory.add_group(new_group_name)
+                            self.inventory.add_child(parent_group_name, new_group_name)
 
-                    # add host to leaf ou
-                    if count == len(organizational_unit_groups) - 1:
-                        self.inventory.add_host(hostname, group=new_group_name)
+                            # add host to leaf ou
+                            if count == len(organizational_unit_groups) - 1:
+                                self.inventory.add_host(hostname, group=new_group_name)
+                                display.vvvv(
+                                    "%s added to inventory group %s"
+                                    % (hostname, new_group_name)
+                                )
+
+                if "memberOf" in entry and self.import_computer_groups == True:
+                    display.debug("processing computer groups %s" % entry["memberOf"])
+                    computer_security_groups = self._get_inventory_group_names_from_computer_security_groups(
+                        entry["memberOf"]
+                    )
+                    for computer_security_group in computer_security_groups:
+                        group_name = self._get_safe_group_name(computer_security_group)
+                        group_added_name = self.inventory.add_group(group_name)
+                        self.inventory.add_child(group=group_added_name, child=hostname)
                         display.vvvv(
-                            "%s added to inventory group %s"
-                            % (hostname, new_group_name)
+                            "%s added to inventory group %s" % (hostname, group_name)
                         )
 
     def verify_file(self, path):
