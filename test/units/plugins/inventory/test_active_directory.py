@@ -134,7 +134,6 @@ def test_get_inventory_group_names_from_computer_distinguished_name_with_nesting
     entry_dn = "CN=server-001,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
     search_base_ou = "OU=Servers,OU=Devices,DC=ansible,DC=local"
     groups = inventory._get_inventory_group_names_from_computer_distinguished_name(entry_dn, search_base_ou)
-    assert groups == None
     assert len(groups) == 2
     assert groups[0] == "Servers"
     assert groups[1] == "servers-ou-1"
