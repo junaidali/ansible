@@ -130,7 +130,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       super(InventoryModule, self).__init__()
 
       # credentials
-      display.vvvv('initializing active_directory inventory plugin')
+      display.verbose('initializing active_directory inventory plugin')
       self.user_name = None
       self.user_password = None
       self.domain_controllers = []
@@ -140,7 +140,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       """
       :param config_data: contents of the inventory config file
       """
-      display.vvvv('setting credentials')
+      display.verbose('setting credentials')
       try:
         self.user_name = self.get_option('username')
       except:
@@ -161,30 +161,30 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       except:
         pass
 
-      display.vvvv('credentials: username - ' + self.user_name)
+      display.verbose('credentials: username - ' + self.user_name)
 
     def _ldap3_conn(self):
       """
       establishes an ldap connection and returns the connection object
       """
-      display.vvvv('initializing ldap connection')
+      display.verbose('initializing ldap connection')
       if self.user_name == None or self.user_password == None:
         raise AnsibleError('insufficient credentials found')
 
       if len(self.domain_controllers) > 1:
-        display.vvvv('creating server connection pool to %s' % self.domain_controllers)
+        display.verbose('creating server connection pool to %s' % self.domain_controllers)
         server = ServerPool()
         for dc in self.domain_controllers:
           server.add(Server(host=dc, use_ssl=self.use_ssl))
       elif len(self.domain_controllers) == 1:
-        display.vvvv('creating single server connection to %s' % self.domain_controllers[0])
+        display.verbose('creating single server connection to %s' % self.domain_controllers[0])
         try:
           server = Server(host=self.domain_controllers[0], use_ssl=self.use_ssl)
         except:
           raise AnsibleError("could not establish connection to domain controller")
       else:
         raise AnsibleError("no domain controller specified")
-      display.vvvv('initializing connection using server url %s' % server)
+      display.verbose('initializing connection using server url %s' % server)
       try:
         connection = Connection(server=server, user=self.user_name, password=self.user_password, auto_bind=True)
       except LDAPException as err:
@@ -198,14 +198,13 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       :param path: the ldap path to query
       :param no_subtree: limit search to path only, do not include subtree
       """
-      display.vvvv('running search query to find computers at path ' + path)
+      display.verbose('running search query to find computers at path ' + path)
       search_scope = BASE if no_subtree else SUBTREE
       try:
         connection.search(search_base=path, search_filter='(objectclass=computer)', attributes=ALL_ATTRIBUTES, search_scope=search_scope)
       except LDAPException as err:
         raise AnsibleError('could not retrieve computer objects %s', err)
-      display.vvvv('total ' + str(len(connection.response)) + ' entries retrieved')
-      #display.vvvv('total ' + len(connection.entries) + ' entries retrieved')
+      display.verbose('total ' + str(len(connection.response)) + ' entries retrieved')
       return connection.entries
 
     def _get_hostname(self, entry, hostnames=None):
@@ -227,14 +226,74 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
       
       return to_text(hostname)
 
-    def _populate(self, entries):
+    def _get_safe_group_name(self, group_name):
+      """
+      :param group_name: the name of ansible inventory group you need to sanitize
+      :returns the sanitized ansible inventory group name
+      """
+      sanitized_name = re.sub('-','_', group_name)
+      sanitized_name = re.sub('\\s','_', sanitized_name)
+      return sanitized_name.lower()
+
+    def _get_inventory_group_names_from_computer_distinguished_name(self, entry_dn, search_ou):
+      """
+      converts an active directory computer objects distinguished name to ansible inventory group names.
+      :param entry_dn: computer object ldap entry distinguished name
+      :param search_ou: the base search organization unit that was used to retrieve the entry. all inventory groups are based off of this OU
+      """
+      result = []
+      if search_ou in entry_dn:
+        display.debug('parsing %s' % entry_dn)
+        parent_group = search_ou.split(',')[0].split('=')[1]
+        result.append(to_text(parent_group))
+        dn_without_search_ou = entry_dn.split(search_ou)[0].strip(',')
+        
+        display.debug('processing dn_without_search_ou %s' % dn_without_search_ou)
+        for count, node in enumerate(dn_without_search_ou.split(',')):
+          display.debug('processing node %s' % node)
+          if count == 0:
+            display.debug('ignoring object %s in group name calculation' % node)
+          else:
+            if '=' in node:
+              result.append(to_text(node.split('=')[1]))
+            else:
+              display.warning('node %s cannot be split to get inventory group name' % node)
+          count += 1
+      else:
+        raise AnsibleError('%s does not exists in %s' % (search_ou, entry_dn))
+      display.debug('returning result %s' % result)
+      return result
+
+    def _populate(self, entries, organizational_unit):
       """
       populates ansible inventory with active directory entries
       :param entries: ldap entries list
       """
+      display.debug('creating all inventory group')
+      self.inventory.add_group('all')
       for entry in entries:
         hostname = self._get_hostname(entry)
-        self.inventory.add_host(hostname)
+        groups = self._get_inventory_group_names_from_computer_distinguished_name(entry.entry_dn, organizational_unit)
+        for count, group in enumerate(groups, start=0):
+          display.debug('%d. processing group %s' %(count, group))
+          new_group_name = ''
+          if count == 0:
+            parent_group_name = self._get_safe_group_name(groups[0])
+            display.debug('adding group %s under all' %(parent_group_name))
+            self.inventory.add_group(parent_group_name)
+            self.inventory.add_child('all', parent_group_name)
+            new_group_name = parent_group_name
+          else:
+            parent_group_name = self._get_safe_group_name('-'.join(groups[0:count]))
+            display.debug('creating parent group %s' % parent_group_name)
+            new_group_name = self._get_safe_group_name(parent_group_name + '_' + group)
+            display.debug('adding %s to %s' %(new_group_name, parent_group_name))
+            self.inventory.add_group(new_group_name)
+            self.inventory.add_child(parent_group_name, new_group_name)
+            
+          # add host to leaf ou
+          if count == len(groups)-1:
+            self.inventory.add_host(hostname, group=new_group_name)
 
     def verify_file(self, path):
         """
@@ -245,7 +304,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         if super(InventoryModule, self).verify_file(path):
             if path.endswith(("active_directory.yml", "active_directory.yaml")):
                 return True
-        display.vvvv(
+        display.verbose(
             "active_directory inventory filename must end with 'active_directory.yml' or 'active_directory.yaml'"
         )
         return False
@@ -280,7 +339,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         if not cache or cache_needs_update:
           for organizational_unit in organizational_units_to_search:
             results = self._query(connection, organizational_unit)
-            self._populate(results)
+            self._populate(results, organizational_unit)
 
         # If the cache has expired/doesn't exist or if refresh_inventory/flush cache is used
         # when the user is using caching, update the cached inventory

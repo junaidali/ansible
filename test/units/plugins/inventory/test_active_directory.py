@@ -94,7 +94,7 @@ def test_query_domain_controllers_organizational_unit(inventory, connection):
     assert len(inventory._query(connection, 'OU=Domain Controllers,DC=ansible,DC=local')) == 1
 
 def test_query_invalid_path_should_raise_error(inventory, connection):
-    with pytest.raises(AnsibleError):
+    with pytest.raises(AnsibleError) as error_message:
         inventory._query(connection=connection, path='UNKNOWN-PATH')
         assert "could not retrieve computer objects" in error_message
 
@@ -103,3 +103,38 @@ def test_loading_computer_objects_using_simple_organizational_unit(inventory, co
 
 def test_loading_computer_objects_using_nested_organizational_unit(inventory, connection):
     assert len(inventory._query(connection=connection, path='OU=Servers,OU=Devices,DC=ansible,DC=local')) == 25
+
+def test_get_safe_group_name_with_dashes(inventory):
+    group_name = "server-ou-1"
+    assert inventory._get_safe_group_name(group_name) == "server_ou_1"
+
+def test_get_safe_group_name_with_spaces(inventory):
+    group_name = "server-ou 1"
+    assert inventory._get_safe_group_name(group_name) == "server_ou_1"
+
+def test_get_safe_group_name_with_upper_case(inventory):
+    group_name = "Server-ou-1"
+    assert inventory._get_safe_group_name(group_name) == "server_ou_1"
+
+def test_get_inventory_group_names_from_computer_distinguished_name_fails_for_invalid_input(inventory):
+    entry_dn = "CN=server-001,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+    search_base_ou = "OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=locals"
+    with pytest.raises(AnsibleError) as error_message:
+        inventory._get_inventory_group_names_from_computer_distinguished_name(entry_dn, search_base_ou)
+        assert "could not retrieve computer objects" in error_message
+
+def test_get_inventory_group_names_from_computer_distinguished_name_no_nesting(inventory):
+    entry_dn = "CN=server-001,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+    search_base_ou = "OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+    groups = inventory._get_inventory_group_names_from_computer_distinguished_name(entry_dn, search_base_ou)
+    assert len(groups) == 1
+    assert groups[0] == "servers-ou-1"
+
+def test_get_inventory_group_names_from_computer_distinguished_name_with_nesting(inventory):
+    entry_dn = "CN=server-001,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+    search_base_ou = "OU=Servers,OU=Devices,DC=ansible,DC=local"
+    groups = inventory._get_inventory_group_names_from_computer_distinguished_name(entry_dn, search_base_ou)
+    assert groups == None
+    assert len(groups) == 2
+    assert groups[0] == "Servers"
+    assert groups[1] == "servers-ou-1"

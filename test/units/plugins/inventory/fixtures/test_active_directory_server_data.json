@@ -3,7 +3,7 @@
         {
             "attributes": {
                 "auditingPolicy": "\u0000\u0001",
-                "creationTime": "2019-11-22 06:47:59.017271+00:00",
+                "creationTime": "2019-11-25 09:23:05.690752+00:00",
                 "dSASignature": {
                     "encoded": "AQAAACgAAAAAAAAAAAAAAAAAAAAAAAAAF9E8viwXJEmNvoujH6S0BQ==",
                     "encoding": "base64"
@@ -68,7 +68,7 @@
                 ],
                 "systemFlags": -1946157056,
                 "uASCompat": 1,
-                "uSNChanged": 12855,
+                "uSNChanged": 20486,
                 "uSNCreated": 4099,
                 "wellKnownObjects": [
                     "B:32:6227F0AF1FC2410D8E3BB10615BB5B0F:CN=NTDS Quotas,DC=ansible,DC=local",
@@ -83,7 +83,7 @@
                     "B:32:AA312825768811D1ADED00C04FD8D5CD:CN=Computers,DC=ansible,DC=local",
                     "B:32:A9D1CA15768811D1ADED00C04FD8D5CD:CN=Users,DC=ansible,DC=local"
                 ],
-                "whenChanged": "2019-11-22 16:10:35+00:00",
+                "whenChanged": "2019-11-25 09:23:05+00:00",
                 "whenCreated": "2019-11-22 12:47:25+00:00"
             },
             "dn": "DC=ansible,DC=local",
@@ -92,7 +92,7 @@
                     "\u0000\u0001"
                 ],
                 "creationTime": [
-                    "132188788790172698"
+                    "132191473856907528"
                 ],
                 "dSASignature": [
                     {
@@ -235,7 +235,7 @@
                     "1"
                 ],
                 "uSNChanged": [
-                    "12855"
+                    "20486"
                 ],
                 "uSNCreated": [
                     "4099"
@@ -254,7 +254,7 @@
                     "B:32:A9D1CA15768811D1ADED00C04FD8D5CD:CN=Users,DC=ansible,DC=local"
                 ],
                 "whenChanged": [
-                    "20191122161035.0Z"
+                    "20191125092305.0Z"
                 ],
                 "whenCreated": [
                     "20191122124725.0Z"
@@ -1190,9 +1190,82 @@
             }
         },
         {
-            "attributes": {},
+            "attributes": {
+                "cn": "Keys",
+                "dSCorePropagationData": [
+                    "2019-11-22 16:10:35+00:00",
+                    "2019-11-22 06:47:59+00:00",
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "description": [
+                    "Default container for key objects"
+                ],
+                "distinguishedName": "CN=Keys,DC=ansible,DC=local",
+                "instanceType": 4,
+                "name": "Keys",
+                "objectCategory": "CN=Container,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "container"
+                ],
+                "objectGUID": "{ae9afa03-bf82-41e6-849c-89b6549279f2}",
+                "showInAdvancedViewOnly": true,
+                "uSNChanged": 6039,
+                "uSNCreated": 6039,
+                "whenChanged": "2019-11-22 12:47:32+00:00",
+                "whenCreated": "2019-11-22 12:47:32+00:00"
+            },
             "dn": "CN=Keys,DC=ansible,DC=local",
-            "raw": {}
+            "raw": {
+                "cn": [
+                    "Keys"
+                ],
+                "dSCorePropagationData": [
+                    "20191122161035.0Z",
+                    "20191122064759.0Z",
+                    "16010101000000.0Z"
+                ],
+                "description": [
+                    "Default container for key objects"
+                ],
+                "distinguishedName": [
+                    "CN=Keys,DC=ansible,DC=local"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "name": [
+                    "Keys"
+                ],
+                "objectCategory": [
+                    "CN=Container,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "container"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "A/qaroK/5kGEnIm2VJJ58g==",
+                        "encoding": "base64"
+                    }
+                ],
+                "showInAdvancedViewOnly": [
+                    "TRUE"
+                ],
+                "uSNChanged": [
+                    "6039"
+                ],
+                "uSNCreated": [
+                    "6039"
+                ],
+                "whenChanged": [
+                    "20191122124732.0Z"
+                ],
+                "whenCreated": [
+                    "20191122124732.0Z"
+                ]
+            }
         },
         {
             "attributes": {
@@ -1900,7 +1973,7 @@
                 "flags": 0,
                 "gPCFileSysPath": "\\\\ansible.local\\sysvol\\ansible.local\\Policies\\{31B2F340-016D-11D2-945F-00C04FB984F9}",
                 "gPCFunctionalityVersion": 2,
-                "gPCMachineExtensionNames": "[{827D319E-6EAC-11D2-A4EA-00C04F79F83A}{803E14A0-B4FB-11D0-A0D0-00A0C90F574B}]",
+                "gPCMachineExtensionNames": "[{35378EAC-683F-11D2-A89A-00C04FBBCFA2}{53D6AB1B-2488-11D1-A28C-00C04FB94F17}][{827D319E-6EAC-11D2-A4EA-00C04F79F83A}{803E14A0-B4FB-11D0-A0D0-00A0C90F574B}][{B1BE8D72-6EAC-11D2-A4EA-00C04F79F83A}{53D6AB1B-2488-11D1-A28C-00C04FB94F17}]",
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
                 "name": "{31B2F340-016D-11D2-945F-00C04FB984F9}",
@@ -1913,10 +1986,10 @@
                 "objectGUID": "{90772274-41f6-4a11-b395-ddd16c4d2e90}",
                 "showInAdvancedViewOnly": true,
                 "systemFlags": -1946157056,
-                "uSNChanged": 5900,
+                "uSNChanged": 16447,
                 "uSNCreated": 5900,
-                "versionNumber": 1,
-                "whenChanged": "2019-11-22 12:47:31+00:00",
+                "versionNumber": 3,
+                "whenChanged": "2019-11-25 15:17:46+00:00",
                 "whenCreated": "2019-11-22 12:47:31+00:00"
             },
             "dn": "CN={31B2F340-016D-11D2-945F-00C04FB984F9},CN=Policies,CN=System,DC=ansible,DC=local",
@@ -1944,7 +2017,7 @@
                     "2"
                 ],
                 "gPCMachineExtensionNames": [
-                    "[{827D319E-6EAC-11D2-A4EA-00C04F79F83A}{803E14A0-B4FB-11D0-A0D0-00A0C90F574B}]"
+                    "[{35378EAC-683F-11D2-A89A-00C04FBBCFA2}{53D6AB1B-2488-11D1-A28C-00C04FB94F17}][{827D319E-6EAC-11D2-A4EA-00C04F79F83A}{803E14A0-B4FB-11D0-A0D0-00A0C90F574B}][{B1BE8D72-6EAC-11D2-A4EA-00C04F79F83A}{53D6AB1B-2488-11D1-A28C-00C04FB94F17}]"
                 ],
                 "instanceType": [
                     "4"
@@ -1976,16 +2049,16 @@
                     "-1946157056"
                 ],
                 "uSNChanged": [
-                    "5900"
+                    "16447"
                 ],
                 "uSNCreated": [
                     "5900"
                 ],
                 "versionNumber": [
-                    "1"
+                    "3"
                 ],
                 "whenChanged": [
-                    "20191122124731.0Z"
+                    "20191125151746.0Z"
                 ],
                 "whenCreated": [
                     "20191122124731.0Z"
@@ -5160,10 +5233,10 @@
             "attributes": {
                 "cn": "AdminSDHolder",
                 "dSCorePropagationData": [
-                    "2019-11-22 22:29:10+00:00",
-                    "2019-11-22 21:29:10+00:00",
-                    "2019-11-22 19:54:42+00:00",
-                    "2019-11-22 17:10:07+00:00",
+                    "2019-11-25 16:38:15+00:00",
+                    "2019-11-25 15:38:15+00:00",
+                    "2019-11-25 14:38:20+00:00",
+                    "2019-11-22 23:54:47+00:00",
                     "1601-01-01 00:00:00+00:00"
                 ],
                 "distinguishedName": "CN=AdminSDHolder,CN=System,DC=ansible,DC=local",
@@ -5189,10 +5262,10 @@
                     "AdminSDHolder"
                 ],
                 "dSCorePropagationData": [
-                    "20191122222910.0Z",
-                    "20191122212910.0Z",
-                    "20191122195442.0Z",
-                    "20191122171007.0Z",
+                    "20191125163815.0Z",
+                    "20191125153815.0Z",
+                    "20191125143820.0Z",
+                    "20191122235447.0Z",
                     "16010101000000.0Z"
                 ],
                 "distinguishedName": [
@@ -12669,14 +12742,18 @@
                 "distinguishedName": "CN=vagrant,CN=Users,DC=ansible,DC=local",
                 "instanceType": 4,
                 "lastLogoff": "1601-01-01 00:00:00+00:00",
-                "lastLogon": "2019-11-22 14:27:11.707666+00:00",
+                "lastLogon": "2019-11-25 15:26:44.482433+00:00",
                 "lastLogonTimestamp": "2019-11-22 12:48:40.176342+00:00",
-                "logonCount": 57,
+                "logonCount": 61,
                 "logonHours": {
                     "encoded": "////////////////////////////",
                     "encoding": "base64"
                 },
                 "memberOf": [
+                    "CN=Group Policy Creator Owners,CN=Users,DC=ansible,DC=local",
+                    "CN=Domain Admins,CN=Users,DC=ansible,DC=local",
+                    "CN=Enterprise Admins,CN=Users,DC=ansible,DC=local",
+                    "CN=Schema Admins,CN=Users,DC=ansible,DC=local",
                     "CN=Users,CN=Builtin,DC=ansible,DC=local",
                     "CN=Administrators,CN=Builtin,DC=ansible,DC=local"
                 ],
@@ -12741,13 +12818,13 @@
                     "0"
                 ],
                 "lastLogon": [
-                    "132189064317076668"
+                    "132191692044824340"
                 ],
                 "lastLogonTimestamp": [
                     "132189005201763430"
                 ],
                 "logonCount": [
-                    "57"
+                    "61"
                 ],
                 "logonHours": [
                     {
@@ -12756,6 +12833,10 @@
                     }
                 ],
                 "memberOf": [
+                    "CN=Group Policy Creator Owners,CN=Users,DC=ansible,DC=local",
+                    "CN=Domain Admins,CN=Users,DC=ansible,DC=local",
+                    "CN=Enterprise Admins,CN=Users,DC=ansible,DC=local",
+                    "CN=Schema Admins,CN=Users,DC=ansible,DC=local",
                     "CN=Users,CN=Builtin,DC=ansible,DC=local",
                     "CN=Administrators,CN=Builtin,DC=ansible,DC=local"
                 ],
@@ -13269,6 +13350,7 @@
                 "instanceType": 4,
                 "memberOf": [
                     "CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=ansible,DC=local",
+                    "CN=Certificate Service DCOM Access,CN=Builtin,DC=ansible,DC=local",
                     "CN=Users,CN=Builtin,DC=ansible,DC=local"
                 ],
                 "name": "S-1-5-11",
@@ -13302,6 +13384,7 @@
                 ],
                 "memberOf": [
                     "CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=ansible,DC=local",
+                    "CN=Certificate Service DCOM Access,CN=Builtin,DC=ansible,DC=local",
                     "CN=Users,CN=Builtin,DC=ansible,DC=local"
                 ],
                 "name": [
@@ -14618,6 +14701,9 @@
                 "groupType": -2147483643,
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
+                "member": [
+                    "CN=S-1-5-11,CN=ForeignSecurityPrincipals,DC=ansible,DC=local"
+                ],
                 "name": "Certificate Service DCOM Access",
                 "objectCategory": "CN=Group,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -14629,9 +14715,9 @@
                 "sAMAccountName": "Certificate Service DCOM Access",
                 "sAMAccountType": 536870912,
                 "systemFlags": -1946157056,
-                "uSNChanged": 8229,
+                "uSNChanged": 16475,
                 "uSNCreated": 8229,
-                "whenChanged": "2019-11-22 12:47:32+00:00",
+                "whenChanged": "2019-11-25 15:20:47+00:00",
                 "whenCreated": "2019-11-22 12:47:32+00:00"
             },
             "dn": "CN=Certificate Service DCOM Access,CN=Builtin,DC=ansible,DC=local",
@@ -14657,6 +14743,9 @@
                 ],
                 "isCriticalSystemObject": [
                     "TRUE"
+                ],
+                "member": [
+                    "CN=S-1-5-11,CN=ForeignSecurityPrincipals,DC=ansible,DC=local"
                 ],
                 "name": [
                     "Certificate Service DCOM Access"
@@ -14687,13 +14776,13 @@
                     "-1946157056"
                 ],
                 "uSNChanged": [
-                    "8229"
+                    "16475"
                 ],
                 "uSNCreated": [
                     "8229"
                 ],
                 "whenChanged": [
-                    "20191122124732.0Z"
+                    "20191125152047.0Z"
                 ],
                 "whenCreated": [
                     "20191122124732.0Z"
@@ -15585,10 +15674,14 @@
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
                 "lastLogoff": "1601-01-01 00:00:00+00:00",
-                "lastLogon": "2019-11-22 22:48:11.962593+00:00",
+                "lastLogon": "2019-11-25 17:23:18.977587+00:00",
                 "lastLogonTimestamp": "2019-11-22 12:48:39.129454+00:00",
                 "localPolicyFlags": 0,
-                "logonCount": 18,
+                "logonCount": 80,
+                "memberOf": [
+                    "CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=ansible,DC=local",
+                    "CN=Cert Publishers,CN=Users,DC=ansible,DC=local"
+                ],
                 "msDFSR-ComputerReferenceBL": [
                     "CN=DC,CN=Topology,CN=Domain System Volume,CN=DFSR-GlobalSettings,CN=System,DC=ansible,DC=local"
                 ],
@@ -15640,10 +15733,16 @@
                     "ldap/dc.ansible.local",
                     "ldap/dc.ansible.local/ansible.local"
                 ],
-                "uSNChanged": 12771,
+                "uSNChanged": 20509,
                 "uSNCreated": 12293,
                 "userAccountControl": 532480,
-                "whenChanged": "2019-11-22 12:58:47+00:00",
+                "userCertificate": [
+                    {
+                        "encoded": "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",
+                        "encoding": "base64"
+                    }
+                ],
+                "whenChanged": "2019-11-25 15:23:55+00:00",
                 "whenCreated": "2019-11-22 06:47:59+00:00"
             },
             "dn": "CN=DC,OU=Domain Controllers,DC=ansible,DC=local",
@@ -15686,7 +15785,7 @@
                     "0"
                 ],
                 "lastLogon": [
-                    "132189364919625941"
+                    "132191761989775878"
                 ],
                 "lastLogonTimestamp": [
                     "132189005191294533"
@@ -15695,7 +15794,11 @@
                     "0"
                 ],
                 "logonCount": [
-                    "18"
+                    "80"
+                ],
+                "memberOf": [
+                    "CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=ansible,DC=local",
+                    "CN=Cert Publishers,CN=Users,DC=ansible,DC=local"
                 ],
                 "msDFSR-ComputerReferenceBL": [
                     "CN=DC,CN=Topology,CN=Domain System Volume,CN=DFSR-GlobalSettings,CN=System,DC=ansible,DC=local"
@@ -15777,7 +15880,7 @@
                     "ldap/dc.ansible.local/ansible.local"
                 ],
                 "uSNChanged": [
-                    "12771"
+                    "20509"
                 ],
                 "uSNCreated": [
                     "12293"
@@ -15785,8 +15888,14 @@
                 "userAccountControl": [
                     "532480"
                 ],
+                "userCertificate": [
+                    {
+                        "encoded": "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",
+                        "encoding": "base64"
+                    }
+                ],
                 "whenChanged": [
-                    "20191122125847.0Z"
+                    "20191125152355.0Z"
                 ],
                 "whenCreated": [
                     "20191122064759.0Z"
@@ -16177,6 +16286,7 @@
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16192,9 +16302,9 @@
                 "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-518",
                 "sAMAccountName": "Schema Admins",
                 "sAMAccountType": 268435456,
-                "uSNChanged": 12784,
+                "uSNChanged": 16457,
                 "uSNCreated": 12336,
-                "whenChanged": "2019-11-22 13:03:09+00:00",
+                "whenChanged": "2019-11-25 15:18:43+00:00",
                 "whenCreated": "2019-11-22 06:47:59+00:00"
             },
             "dn": "CN=Schema Admins,CN=Users,DC=ansible,DC=local",
@@ -16226,6 +16336,7 @@
                     "TRUE"
                 ],
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16260,13 +16371,13 @@
                     "268435456"
                 ],
                 "uSNChanged": [
-                    "12784"
+                    "16457"
                 ],
                 "uSNCreated": [
                     "12336"
                 ],
                 "whenChanged": [
-                    "20191122130309.0Z"
+                    "20191125151843.0Z"
                 ],
                 "whenCreated": [
                     "20191122064759.0Z"
@@ -16290,6 +16401,7 @@
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16306,9 +16418,9 @@
                 "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-519",
                 "sAMAccountName": "Enterprise Admins",
                 "sAMAccountType": 268435456,
-                "uSNChanged": 12785,
+                "uSNChanged": 16443,
                 "uSNCreated": 12339,
-                "whenChanged": "2019-11-22 13:03:09+00:00",
+                "whenChanged": "2019-11-25 15:17:18+00:00",
                 "whenCreated": "2019-11-22 06:47:59+00:00"
             },
             "dn": "CN=Enterprise Admins,CN=Users,DC=ansible,DC=local",
@@ -16340,6 +16452,7 @@
                     "TRUE"
                 ],
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16375,13 +16488,13 @@
                     "268435456"
                 ],
                 "uSNChanged": [
-                    "12785"
+                    "16443"
                 ],
                 "uSNCreated": [
                     "12339"
                 ],
                 "whenChanged": [
-                    "20191122130309.0Z"
+                    "20191125151718.0Z"
                 ],
                 "whenCreated": [
                     "20191122064759.0Z"
@@ -16402,6 +16515,9 @@
                 "groupType": -2147483644,
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
+                "member": [
+                    "CN=DC,OU=Domain Controllers,DC=ansible,DC=local"
+                ],
                 "memberOf": [
                     "CN=Denied RODC Password Replication Group,CN=Users,DC=ansible,DC=local"
                 ],
@@ -16415,9 +16531,9 @@
                 "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-517",
                 "sAMAccountName": "Cert Publishers",
                 "sAMAccountType": 536870912,
-                "uSNChanged": 12344,
+                "uSNChanged": 16477,
                 "uSNCreated": 12342,
-                "whenChanged": "2019-11-22 06:47:59+00:00",
+                "whenChanged": "2019-11-25 15:20:47+00:00",
                 "whenCreated": "2019-11-22 06:47:59+00:00"
             },
             "dn": "CN=Cert Publishers,CN=Users,DC=ansible,DC=local",
@@ -16443,6 +16559,9 @@
                 ],
                 "isCriticalSystemObject": [
                     "TRUE"
+                ],
+                "member": [
+                    "CN=DC,OU=Domain Controllers,DC=ansible,DC=local"
                 ],
                 "memberOf": [
                     "CN=Denied RODC Password Replication Group,CN=Users,DC=ansible,DC=local"
@@ -16476,13 +16595,13 @@
                     "536870912"
                 ],
                 "uSNChanged": [
-                    "12344"
+                    "16477"
                 ],
                 "uSNCreated": [
                     "12342"
                 ],
                 "whenChanged": [
-                    "20191122064759.0Z"
+                    "20191125152047.0Z"
                 ],
                 "whenCreated": [
                     "20191122064759.0Z"
@@ -16506,6 +16625,7 @@
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16522,9 +16642,9 @@
                 "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-512",
                 "sAMAccountName": "Domain Admins",
                 "sAMAccountType": 268435456,
-                "uSNChanged": 12783,
+                "uSNChanged": 16451,
                 "uSNCreated": 12345,
-                "whenChanged": "2019-11-22 13:03:09+00:00",
+                "whenChanged": "2019-11-25 15:18:43+00:00",
                 "whenCreated": "2019-11-22 06:47:59+00:00"
             },
             "dn": "CN=Domain Admins,CN=Users,DC=ansible,DC=local",
@@ -16556,6 +16676,7 @@
                     "TRUE"
                 ],
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16591,13 +16712,13 @@
                     "268435456"
                 ],
                 "uSNChanged": [
-                    "12783"
+                    "16451"
                 ],
                 "uSNCreated": [
                     "12345"
                 ],
                 "whenChanged": [
-                    "20191122130309.0Z"
+                    "20191125151843.0Z"
                 ],
                 "whenCreated": [
                     "20191122064759.0Z"
@@ -16821,6 +16942,7 @@
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16836,9 +16958,9 @@
                 "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-520",
                 "sAMAccountName": "Group Policy Creator Owners",
                 "sAMAccountType": 268435456,
-                "uSNChanged": 12391,
+                "uSNChanged": 16454,
                 "uSNCreated": 12354,
-                "whenChanged": "2019-11-22 06:47:59+00:00",
+                "whenChanged": "2019-11-25 15:18:43+00:00",
                 "whenCreated": "2019-11-22 06:47:59+00:00"
             },
             "dn": "CN=Group Policy Creator Owners,CN=Users,DC=ansible,DC=local",
@@ -16866,6 +16988,7 @@
                     "TRUE"
                 ],
                 "member": [
+                    "CN=vagrant,CN=Users,DC=ansible,DC=local",
                     "CN=Administrator,CN=Users,DC=ansible,DC=local"
                 ],
                 "memberOf": [
@@ -16900,13 +17023,13 @@
                     "268435456"
                 ],
                 "uSNChanged": [
-                    "12391"
+                    "16454"
                 ],
                 "uSNCreated": [
                     "12354"
                 ],
                 "whenChanged": [
-                    "20191122064759.0Z"
+                    "20191125151843.0Z"
                 ],
                 "whenCreated": [
                     "20191122064759.0Z"
@@ -17227,6 +17350,7 @@
                 "instanceType": 4,
                 "isCriticalSystemObject": true,
                 "member": [
+                    "CN=DC,OU=Domain Controllers,DC=ansible,DC=local",
                     "CN=S-1-5-11,CN=ForeignSecurityPrincipals,DC=ansible,DC=local"
                 ],
                 "name": "Pre-Windows 2000 Compatible Access",
@@ -17240,9 +17364,9 @@
                 "sAMAccountName": "Pre-Windows 2000 Compatible Access",
                 "sAMAccountType": 536870912,
                 "systemFlags": -1946157056,
-                "uSNChanged": 12393,
+                "uSNChanged": 16480,
                 "uSNCreated": 12366,
-                "whenChanged": "2019-11-22 06:47:59+00:00",
+                "whenChanged": "2019-11-25 15:20:47+00:00",
                 "whenCreated": "2019-11-22 06:47:59+00:00"
             },
             "dn": "CN=Pre-Windows 2000 Compatible Access,CN=Builtin,DC=ansible,DC=local",
@@ -17270,6 +17394,7 @@
                     "TRUE"
                 ],
                 "member": [
+                    "CN=DC,OU=Domain Controllers,DC=ansible,DC=local",
                     "CN=S-1-5-11,CN=ForeignSecurityPrincipals,DC=ansible,DC=local"
                 ],
                 "name": [
@@ -17301,13 +17426,13 @@
                     "-1946157056"
                 ],
                 "uSNChanged": [
-                    "12393"
+                    "16480"
                 ],
                 "uSNCreated": [
                     "12366"
                 ],
                 "whenChanged": [
-                    "20191122064759.0Z"
+                    "20191125152047.0Z"
                 ],
                 "whenCreated": [
                     "20191122064759.0Z"
@@ -18650,7 +18775,7 @@
                 ],
                 "objectGUID": "{1441a94e-cbd3-4596-9abb-2c7bd1d8ec14}",
                 "rIDAllocationPool": 6871947674701,
-                "rIDNextRID": 1153,
+                "rIDNextRID": 1164,
                 "rIDPreviousAllocationPool": 6871947674701,
                 "rIDUsedPool": 0,
                 "showInAdvancedViewOnly": true,
@@ -18693,7 +18818,7 @@
                     "6871947674701"
                 ],
                 "rIDNextRID": [
-                    "1153"
+                    "1164"
                 ],
                 "rIDPreviousAllocationPool": [
                     "6871947674701"
@@ -22300,6 +22425,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-001",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -22364,6 +22492,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-001"
@@ -22437,6 +22568,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-App,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-002",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -22501,6 +22635,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-App,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-002"
@@ -22574,6 +22711,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-003",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -22638,6 +22778,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-003"
@@ -22711,6 +22854,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-004",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -22775,6 +22921,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-004"
@@ -22848,6 +22997,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-App,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-005",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -22912,6 +23064,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-App,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-005"
@@ -22985,6 +23140,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-006",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -23049,6 +23207,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-006"
@@ -23122,6 +23283,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-007",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -23186,6 +23350,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-007"
@@ -23259,6 +23426,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-App,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-008",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -23323,6 +23493,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-App,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-008"
@@ -23396,6 +23569,9 @@
                 "lastLogon": "1601-01-01 00:00:00+00:00",
                 "localPolicyFlags": 0,
                 "logonCount": 0,
+                "memberOf": [
+                    "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local"
+                ],
                 "name": "server-009",
                 "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
                 "objectClass": [
@@ -23460,6 +23636,9 @@
                 ],
                 "logonCount": [
                     "0"
+                ],
+                "memberOf": [
+                    "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local"
                 ],
                 "name": [
                     "server-009"
@@ -29129,6 +29308,1062 @@
                 ],
                 "whenCreated": [
                     "20191122224840.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "accountExpires": "9999-12-31 23:59:59.999999+00:00",
+                "badPasswordTime": "1601-01-01 00:00:00+00:00",
+                "badPwdCount": 0,
+                "cn": "computer-001",
+                "codePage": 0,
+                "countryCode": 0,
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "distinguishedName": "CN=computer-001,CN=Computers,DC=ansible,DC=local",
+                "instanceType": 4,
+                "isCriticalSystemObject": false,
+                "lastLogoff": "1601-01-01 00:00:00+00:00",
+                "lastLogon": "1601-01-01 00:00:00+00:00",
+                "localPolicyFlags": 0,
+                "logonCount": 0,
+                "name": "computer-001",
+                "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": "{36c23c61-ae75-4322-88fc-85417fc77f97}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1154",
+                "primaryGroupID": 515,
+                "pwdLastSet": "2019-11-25 16:49:42.902359+00:00",
+                "sAMAccountName": "computer-001$",
+                "sAMAccountType": 805306369,
+                "uSNChanged": 20542,
+                "uSNCreated": 20538,
+                "userAccountControl": 4096,
+                "whenChanged": "2019-11-25 16:49:42+00:00",
+                "whenCreated": "2019-11-25 16:49:42+00:00"
+            },
+            "dn": "CN=computer-001,CN=Computers,DC=ansible,DC=local",
+            "raw": {
+                "accountExpires": [
+                    "9223372036854775807"
+                ],
+                "badPasswordTime": [
+                    "0"
+                ],
+                "badPwdCount": [
+                    "0"
+                ],
+                "cn": [
+                    "computer-001"
+                ],
+                "codePage": [
+                    "0"
+                ],
+                "countryCode": [
+                    "0"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "distinguishedName": [
+                    "CN=computer-001,CN=Computers,DC=ansible,DC=local"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "isCriticalSystemObject": [
+                    "FALSE"
+                ],
+                "lastLogoff": [
+                    "0"
+                ],
+                "lastLogon": [
+                    "0"
+                ],
+                "localPolicyFlags": [
+                    "0"
+                ],
+                "logonCount": [
+                    "0"
+                ],
+                "name": [
+                    "computer-001"
+                ],
+                "objectCategory": [
+                    "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "YTzCNnWuIkOI/IVBf8d/lw==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6ggQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "primaryGroupID": [
+                    "515"
+                ],
+                "pwdLastSet": [
+                    "132191741829023589"
+                ],
+                "sAMAccountName": [
+                    "computer-001$"
+                ],
+                "sAMAccountType": [
+                    "805306369"
+                ],
+                "uSNChanged": [
+                    "20542"
+                ],
+                "uSNCreated": [
+                    "20538"
+                ],
+                "userAccountControl": [
+                    "4096"
+                ],
+                "whenChanged": [
+                    "20191125164942.0Z"
+                ],
+                "whenCreated": [
+                    "20191125164942.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "accountExpires": "9999-12-31 23:59:59.999999+00:00",
+                "badPasswordTime": "1601-01-01 00:00:00+00:00",
+                "badPwdCount": 0,
+                "cn": "computer-002",
+                "codePage": 0,
+                "countryCode": 0,
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "distinguishedName": "CN=computer-002,CN=Computers,DC=ansible,DC=local",
+                "instanceType": 4,
+                "isCriticalSystemObject": false,
+                "lastLogoff": "1601-01-01 00:00:00+00:00",
+                "lastLogon": "1601-01-01 00:00:00+00:00",
+                "localPolicyFlags": 0,
+                "logonCount": 0,
+                "name": "computer-002",
+                "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": "{8c261196-4de6-4b0a-a395-684c44a1690f}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1155",
+                "primaryGroupID": 515,
+                "pwdLastSet": "2019-11-25 16:49:43.014360+00:00",
+                "sAMAccountName": "computer-002$",
+                "sAMAccountType": 805306369,
+                "uSNChanged": 20548,
+                "uSNCreated": 20544,
+                "userAccountControl": 4096,
+                "whenChanged": "2019-11-25 16:49:43+00:00",
+                "whenCreated": "2019-11-25 16:49:43+00:00"
+            },
+            "dn": "CN=computer-002,CN=Computers,DC=ansible,DC=local",
+            "raw": {
+                "accountExpires": [
+                    "9223372036854775807"
+                ],
+                "badPasswordTime": [
+                    "0"
+                ],
+                "badPwdCount": [
+                    "0"
+                ],
+                "cn": [
+                    "computer-002"
+                ],
+                "codePage": [
+                    "0"
+                ],
+                "countryCode": [
+                    "0"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "distinguishedName": [
+                    "CN=computer-002,CN=Computers,DC=ansible,DC=local"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "isCriticalSystemObject": [
+                    "FALSE"
+                ],
+                "lastLogoff": [
+                    "0"
+                ],
+                "lastLogon": [
+                    "0"
+                ],
+                "localPolicyFlags": [
+                    "0"
+                ],
+                "logonCount": [
+                    "0"
+                ],
+                "name": [
+                    "computer-002"
+                ],
+                "objectCategory": [
+                    "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "lhEmjOZNCkujlWhMRKFpDw==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6gwQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "primaryGroupID": [
+                    "515"
+                ],
+                "pwdLastSet": [
+                    "132191741830143602"
+                ],
+                "sAMAccountName": [
+                    "computer-002$"
+                ],
+                "sAMAccountType": [
+                    "805306369"
+                ],
+                "uSNChanged": [
+                    "20548"
+                ],
+                "uSNCreated": [
+                    "20544"
+                ],
+                "userAccountControl": [
+                    "4096"
+                ],
+                "whenChanged": [
+                    "20191125164943.0Z"
+                ],
+                "whenCreated": [
+                    "20191125164943.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "accountExpires": "9999-12-31 23:59:59.999999+00:00",
+                "badPasswordTime": "1601-01-01 00:00:00+00:00",
+                "badPwdCount": 0,
+                "cn": "computer-003",
+                "codePage": 0,
+                "countryCode": 0,
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "distinguishedName": "CN=computer-003,CN=Computers,DC=ansible,DC=local",
+                "instanceType": 4,
+                "isCriticalSystemObject": false,
+                "lastLogoff": "1601-01-01 00:00:00+00:00",
+                "lastLogon": "1601-01-01 00:00:00+00:00",
+                "localPolicyFlags": 0,
+                "logonCount": 0,
+                "name": "computer-003",
+                "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": "{ec7fbcfb-98fc-4bf0-9cab-ae526c430378}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1156",
+                "primaryGroupID": 515,
+                "pwdLastSet": "2019-11-25 16:49:43.099360+00:00",
+                "sAMAccountName": "computer-003$",
+                "sAMAccountType": 805306369,
+                "uSNChanged": 20554,
+                "uSNCreated": 20550,
+                "userAccountControl": 4096,
+                "whenChanged": "2019-11-25 16:49:43+00:00",
+                "whenCreated": "2019-11-25 16:49:43+00:00"
+            },
+            "dn": "CN=computer-003,CN=Computers,DC=ansible,DC=local",
+            "raw": {
+                "accountExpires": [
+                    "9223372036854775807"
+                ],
+                "badPasswordTime": [
+                    "0"
+                ],
+                "badPwdCount": [
+                    "0"
+                ],
+                "cn": [
+                    "computer-003"
+                ],
+                "codePage": [
+                    "0"
+                ],
+                "countryCode": [
+                    "0"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "distinguishedName": [
+                    "CN=computer-003,CN=Computers,DC=ansible,DC=local"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "isCriticalSystemObject": [
+                    "FALSE"
+                ],
+                "lastLogoff": [
+                    "0"
+                ],
+                "lastLogon": [
+                    "0"
+                ],
+                "localPolicyFlags": [
+                    "0"
+                ],
+                "logonCount": [
+                    "0"
+                ],
+                "name": [
+                    "computer-003"
+                ],
+                "objectCategory": [
+                    "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "+7x/7PyY8Eucq65SbEMDeA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6hAQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "primaryGroupID": [
+                    "515"
+                ],
+                "pwdLastSet": [
+                    "132191741830993597"
+                ],
+                "sAMAccountName": [
+                    "computer-003$"
+                ],
+                "sAMAccountType": [
+                    "805306369"
+                ],
+                "uSNChanged": [
+                    "20554"
+                ],
+                "uSNCreated": [
+                    "20550"
+                ],
+                "userAccountControl": [
+                    "4096"
+                ],
+                "whenChanged": [
+                    "20191125164943.0Z"
+                ],
+                "whenCreated": [
+                    "20191125164943.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "accountExpires": "9999-12-31 23:59:59.999999+00:00",
+                "badPasswordTime": "1601-01-01 00:00:00+00:00",
+                "badPwdCount": 0,
+                "cn": "computer-004",
+                "codePage": 0,
+                "countryCode": 0,
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "distinguishedName": "CN=computer-004,CN=Computers,DC=ansible,DC=local",
+                "instanceType": 4,
+                "isCriticalSystemObject": false,
+                "lastLogoff": "1601-01-01 00:00:00+00:00",
+                "lastLogon": "1601-01-01 00:00:00+00:00",
+                "localPolicyFlags": 0,
+                "logonCount": 0,
+                "name": "computer-004",
+                "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": "{5ecff700-65e3-4955-97d3-4435aa1a0fa5}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1157",
+                "primaryGroupID": 515,
+                "pwdLastSet": "2019-11-25 16:49:43.172359+00:00",
+                "sAMAccountName": "computer-004$",
+                "sAMAccountType": 805306369,
+                "uSNChanged": 20560,
+                "uSNCreated": 20556,
+                "userAccountControl": 4096,
+                "whenChanged": "2019-11-25 16:49:43+00:00",
+                "whenCreated": "2019-11-25 16:49:43+00:00"
+            },
+            "dn": "CN=computer-004,CN=Computers,DC=ansible,DC=local",
+            "raw": {
+                "accountExpires": [
+                    "9223372036854775807"
+                ],
+                "badPasswordTime": [
+                    "0"
+                ],
+                "badPwdCount": [
+                    "0"
+                ],
+                "cn": [
+                    "computer-004"
+                ],
+                "codePage": [
+                    "0"
+                ],
+                "countryCode": [
+                    "0"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "distinguishedName": [
+                    "CN=computer-004,CN=Computers,DC=ansible,DC=local"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "isCriticalSystemObject": [
+                    "FALSE"
+                ],
+                "lastLogoff": [
+                    "0"
+                ],
+                "lastLogon": [
+                    "0"
+                ],
+                "localPolicyFlags": [
+                    "0"
+                ],
+                "logonCount": [
+                    "0"
+                ],
+                "name": [
+                    "computer-004"
+                ],
+                "objectCategory": [
+                    "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "APfPXuNlVUmX00Q1qhoPpQ==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6hQQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "primaryGroupID": [
+                    "515"
+                ],
+                "pwdLastSet": [
+                    "132191741831723594"
+                ],
+                "sAMAccountName": [
+                    "computer-004$"
+                ],
+                "sAMAccountType": [
+                    "805306369"
+                ],
+                "uSNChanged": [
+                    "20560"
+                ],
+                "uSNCreated": [
+                    "20556"
+                ],
+                "userAccountControl": [
+                    "4096"
+                ],
+                "whenChanged": [
+                    "20191125164943.0Z"
+                ],
+                "whenCreated": [
+                    "20191125164943.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "accountExpires": "9999-12-31 23:59:59.999999+00:00",
+                "badPasswordTime": "1601-01-01 00:00:00+00:00",
+                "badPwdCount": 0,
+                "cn": "computer-005",
+                "codePage": 0,
+                "countryCode": 0,
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "distinguishedName": "CN=computer-005,CN=Computers,DC=ansible,DC=local",
+                "instanceType": 4,
+                "isCriticalSystemObject": false,
+                "lastLogoff": "1601-01-01 00:00:00+00:00",
+                "lastLogon": "1601-01-01 00:00:00+00:00",
+                "localPolicyFlags": 0,
+                "logonCount": 0,
+                "name": "computer-005",
+                "objectCategory": "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": "{a7db9f62-e085-4c6a-b15a-99213d8f3c8b}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1158",
+                "primaryGroupID": 515,
+                "pwdLastSet": "2019-11-25 16:49:43.265358+00:00",
+                "sAMAccountName": "computer-005$",
+                "sAMAccountType": 805306369,
+                "uSNChanged": 20566,
+                "uSNCreated": 20562,
+                "userAccountControl": 4096,
+                "whenChanged": "2019-11-25 16:49:43+00:00",
+                "whenCreated": "2019-11-25 16:49:43+00:00"
+            },
+            "dn": "CN=computer-005,CN=Computers,DC=ansible,DC=local",
+            "raw": {
+                "accountExpires": [
+                    "9223372036854775807"
+                ],
+                "badPasswordTime": [
+                    "0"
+                ],
+                "badPwdCount": [
+                    "0"
+                ],
+                "cn": [
+                    "computer-005"
+                ],
+                "codePage": [
+                    "0"
+                ],
+                "countryCode": [
+                    "0"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "distinguishedName": [
+                    "CN=computer-005,CN=Computers,DC=ansible,DC=local"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "isCriticalSystemObject": [
+                    "FALSE"
+                ],
+                "lastLogoff": [
+                    "0"
+                ],
+                "lastLogon": [
+                    "0"
+                ],
+                "localPolicyFlags": [
+                    "0"
+                ],
+                "logonCount": [
+                    "0"
+                ],
+                "name": [
+                    "computer-005"
+                ],
+                "objectCategory": [
+                    "CN=Computer,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "person",
+                    "organizationalPerson",
+                    "user",
+                    "computer"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "Yp/bp4XgakyxWpkhPY88iw==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6hgQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "primaryGroupID": [
+                    "515"
+                ],
+                "pwdLastSet": [
+                    "132191741832653591"
+                ],
+                "sAMAccountName": [
+                    "computer-005$"
+                ],
+                "sAMAccountType": [
+                    "805306369"
+                ],
+                "uSNChanged": [
+                    "20566"
+                ],
+                "uSNCreated": [
+                    "20562"
+                ],
+                "userAccountControl": [
+                    "4096"
+                ],
+                "whenChanged": [
+                    "20191125164943.0Z"
+                ],
+                "whenCreated": [
+                    "20191125164943.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "dSCorePropagationData": [
+                    "2019-11-25 17:38:54+00:00",
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "description": [
+                    "Security Groups"
+                ],
+                "distinguishedName": "OU=Security Groups,DC=ansible,DC=local",
+                "instanceType": 4,
+                "name": "Security Groups",
+                "objectCategory": "CN=Organizational-Unit,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "organizationalUnit"
+                ],
+                "objectGUID": "{02e1fe0b-39f0-444e-8727-13bb067658e9}",
+                "ou": [
+                    "Security Groups"
+                ],
+                "uSNChanged": 20611,
+                "uSNCreated": 20610,
+                "whenChanged": "2019-11-25 17:38:54+00:00",
+                "whenCreated": "2019-11-25 17:38:54+00:00"
+            },
+            "dn": "OU=Security Groups,DC=ansible,DC=local",
+            "raw": {
+                "dSCorePropagationData": [
+                    "20191125173854.0Z",
+                    "16010101000000.0Z"
+                ],
+                "description": [
+                    "Security Groups"
+                ],
+                "distinguishedName": [
+                    "OU=Security Groups,DC=ansible,DC=local"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "name": [
+                    "Security Groups"
+                ],
+                "objectCategory": [
+                    "CN=Organizational-Unit,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "organizationalUnit"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "C/7hAvA5TkSHJxO7BnZY6Q==",
+                        "encoding": "base64"
+                    }
+                ],
+                "ou": [
+                    "Security Groups"
+                ],
+                "uSNChanged": [
+                    "20611"
+                ],
+                "uSNCreated": [
+                    "20610"
+                ],
+                "whenChanged": [
+                    "20191125173854.0Z"
+                ],
+                "whenCreated": [
+                    "20191125173854.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "cn": "App1-Web",
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "description": [
+                    "Web Servers for Application 1"
+                ],
+                "distinguishedName": "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local",
+                "groupType": -2147483646,
+                "instanceType": 4,
+                "member": [
+                    "CN=server-007,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-004,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-001,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+                ],
+                "name": "App1-Web",
+                "objectCategory": "CN=Group,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "group"
+                ],
+                "objectGUID": "{8fe7f98c-ee7d-4a85-9fb9-e9e297ececb0}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1162",
+                "sAMAccountName": "App1-Web",
+                "sAMAccountType": 268435456,
+                "uSNChanged": 20631,
+                "uSNCreated": 20613,
+                "whenChanged": "2019-11-25 17:38:55+00:00",
+                "whenCreated": "2019-11-25 17:38:55+00:00"
+            },
+            "dn": "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local",
+            "raw": {
+                "cn": [
+                    "App1-Web"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "description": [
+                    "Web Servers for Application 1"
+                ],
+                "distinguishedName": [
+                    "CN=App1-Web,OU=Security Groups,DC=ansible,DC=local"
+                ],
+                "groupType": [
+                    "-2147483646"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "member": [
+                    "CN=server-007,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-004,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-001,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+                ],
+                "name": [
+                    "App1-Web"
+                ],
+                "objectCategory": [
+                    "CN=Group,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "group"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "jPnnj33uhUqfuenil+zssA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6igQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "sAMAccountName": [
+                    "App1-Web"
+                ],
+                "sAMAccountType": [
+                    "268435456"
+                ],
+                "uSNChanged": [
+                    "20631"
+                ],
+                "uSNCreated": [
+                    "20613"
+                ],
+                "whenChanged": [
+                    "20191125173855.0Z"
+                ],
+                "whenCreated": [
+                    "20191125173855.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "cn": "App1-App",
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "description": [
+                    "Application Servers for Application 1"
+                ],
+                "distinguishedName": "CN=App1-App,OU=Security Groups,DC=ansible,DC=local",
+                "groupType": -2147483646,
+                "instanceType": 4,
+                "member": [
+                    "CN=server-008,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-005,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-002,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+                ],
+                "name": "App1-App",
+                "objectCategory": "CN=Group,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "group"
+                ],
+                "objectGUID": "{f14a9fd4-54ff-46de-b618-01b1b3db2a16}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1163",
+                "sAMAccountName": "App1-App",
+                "sAMAccountType": 268435456,
+                "uSNChanged": 20640,
+                "uSNCreated": 20617,
+                "whenChanged": "2019-11-25 17:38:55+00:00",
+                "whenCreated": "2019-11-25 17:38:55+00:00"
+            },
+            "dn": "CN=App1-App,OU=Security Groups,DC=ansible,DC=local",
+            "raw": {
+                "cn": [
+                    "App1-App"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "description": [
+                    "Application Servers for Application 1"
+                ],
+                "distinguishedName": [
+                    "CN=App1-App,OU=Security Groups,DC=ansible,DC=local"
+                ],
+                "groupType": [
+                    "-2147483646"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "member": [
+                    "CN=server-008,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-005,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-002,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+                ],
+                "name": [
+                    "App1-App"
+                ],
+                "objectCategory": [
+                    "CN=Group,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "group"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "1J9K8f9U3ka2GAGxs9sqFg==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6iwQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "sAMAccountName": [
+                    "App1-App"
+                ],
+                "sAMAccountType": [
+                    "268435456"
+                ],
+                "uSNChanged": [
+                    "20640"
+                ],
+                "uSNCreated": [
+                    "20617"
+                ],
+                "whenChanged": [
+                    "20191125173855.0Z"
+                ],
+                "whenCreated": [
+                    "20191125173855.0Z"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "cn": "App1-DB",
+                "dSCorePropagationData": [
+                    "1601-01-01 00:00:00+00:00"
+                ],
+                "description": [
+                    "Database Servers for Application 1"
+                ],
+                "distinguishedName": "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local",
+                "groupType": -2147483646,
+                "instanceType": 4,
+                "member": [
+                    "CN=server-009,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-006,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-003,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+                ],
+                "name": "App1-DB",
+                "objectCategory": "CN=Group,CN=Schema,CN=Configuration,DC=ansible,DC=local",
+                "objectClass": [
+                    "top",
+                    "group"
+                ],
+                "objectGUID": "{12ded956-0625-4a32-a149-78b548f0345e}",
+                "objectSid": "S-1-5-21-1287692336-4174105921-4209068764-1164",
+                "sAMAccountName": "App1-DB",
+                "sAMAccountType": 268435456,
+                "uSNChanged": 20649,
+                "uSNCreated": 20621,
+                "whenChanged": "2019-11-25 17:38:55+00:00",
+                "whenCreated": "2019-11-25 17:38:55+00:00"
+            },
+            "dn": "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local",
+            "raw": {
+                "cn": [
+                    "App1-DB"
+                ],
+                "dSCorePropagationData": [
+                    "16010101000000.0Z"
+                ],
+                "description": [
+                    "Database Servers for Application 1"
+                ],
+                "distinguishedName": [
+                    "CN=App1-DB,OU=Security Groups,DC=ansible,DC=local"
+                ],
+                "groupType": [
+                    "-2147483646"
+                ],
+                "instanceType": [
+                    "4"
+                ],
+                "member": [
+                    "CN=server-009,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-006,OU=servers-ou-2,OU=Servers,OU=Devices,DC=ansible,DC=local",
+                    "CN=server-003,OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
+                ],
+                "name": [
+                    "App1-DB"
+                ],
+                "objectCategory": [
+                    "CN=Group,CN=Schema,CN=Configuration,DC=ansible,DC=local"
+                ],
+                "objectClass": [
+                    "top",
+                    "group"
+                ],
+                "objectGUID": [
+                    {
+                        "encoded": "VtneEiUGMkqhSXi1SPA0Xg==",
+                        "encoding": "base64"
+                    }
+                ],
+                "objectSid": [
+                    {
+                        "encoded": "AQUAAAAAAAUVAAAAMKDATEHNy/jcSuH6jAQAAA==",
+                        "encoding": "base64"
+                    }
+                ],
+                "sAMAccountName": [
+                    "App1-DB"
+                ],
+                "sAMAccountType": [
+                    "268435456"
+                ],
+                "uSNChanged": [
+                    "20649"
+                ],
+                "uSNCreated": [
+                    "20621"
+                ],
+                "whenChanged": [
+                    "20191125173855.0Z"
+                ],
+                "whenCreated": [
+                    "20191125173855.0Z"
                 ]
             }
         }
