@@ -138,6 +138,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         self.domain_controllers = []
         self.use_ssl = True
         self.last_activity = 30
+        self.import_disabled = False
 
     def _init_data(self):
         """
@@ -166,6 +167,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         try:
             self.last_activity = self.get_option("last_activity")
+        except:
+            pass
+
+        try:
+            self.import_disabled = self.get_option("import_disabled")
         except:
             pass
 
@@ -304,7 +310,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             display.debug("processing entry %s" % entry)
             hostname = self._get_hostname(entry)
             # check last logon timestamp to see if account is enabled
-            if entry["userAccountControl"] in [4098, 532482]:
+            if entry["userAccountControl"] in [4098, 532482] and self.import_disabled == False:
                 display.vvvv("Ignoring %s as it is currently disabled" % (hostname))
             elif (
                 "lastLogonTimestamp" in entry
