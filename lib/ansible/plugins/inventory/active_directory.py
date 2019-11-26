@@ -131,7 +131,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
     def __init__(self):
         super(InventoryModule, self).__init__()
 
-        # credentials
+        # set default values for parameters
         display.verbose("initializing active_directory inventory plugin")
         self.user_name = None
         self.user_password = None
@@ -139,6 +139,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         self.use_ssl = True
         self.last_activity = 30
         self.import_disabled = False
+        self.import_computer_groups = False
 
     def _init_data(self):
         """
@@ -172,6 +173,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         try:
             self.import_disabled = self.get_option("import_disabled")
+        except:
+            pass
+
+        try:
+            self.import_computer_groups = self.get_option("import_computer_groups")
         except:
             pass
 
@@ -310,7 +316,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             display.debug("processing entry %s" % entry)
             hostname = self._get_hostname(entry)
             # check last logon timestamp to see if account is enabled
-            if entry["userAccountControl"] in [4098, 532482] and self.import_disabled == False:
+            if (
+                entry["userAccountControl"] in [4098, 532482]
+                and self.import_disabled == False
+            ):
                 display.vvvv("Ignoring %s as it is currently disabled" % (hostname))
             elif (
                 "lastLogonTimestamp" in entry
@@ -327,21 +336,23 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                     % (hostname, entry["lastLogonTimestamp"], self.last_activity)
                 )
             else:
-                groups = self._get_inventory_group_names_from_computer_distinguished_name(
+                organizational_unit_groups = self._get_inventory_group_names_from_computer_distinguished_name(
                     entry.entry_dn, organizational_unit
                 )
-                for count, group in enumerate(groups, start=0):
+                for count, group in enumerate(organizational_unit_groups, start=0):
                     display.debug("%d. processing group %s" % (count, group))
                     new_group_name = ""
                     if count == 0:
-                        parent_group_name = self._get_safe_group_name(groups[0])
+                        parent_group_name = self._get_safe_group_name(
+                            organizational_unit_groups[0]
+                        )
                         display.debug("adding group %s under all" % (parent_group_name))
                         self.inventory.add_group(parent_group_name)
                         self.inventory.add_child("all", parent_group_name)
                         new_group_name = parent_group_name
                     else:
                         parent_group_name = self._get_safe_group_name(
-                            "-".join(groups[0:count])
+                            "-".join(organizational_unit_groups[0:count])
                         )
                         display.debug("creating parent group %s" % parent_group_name)
                         new_group_name = self._get_safe_group_name(
@@ -354,7 +365,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                         self.inventory.add_child(parent_group_name, new_group_name)
 
                     # add host to leaf ou
-                    if count == len(groups) - 1:
+                    if count == len(organizational_unit_groups) - 1:
                         self.inventory.add_host(hostname, group=new_group_name)
                         display.vvvv(
                             "%s added to inventory group %s"
