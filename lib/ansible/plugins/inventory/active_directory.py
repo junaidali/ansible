@@ -50,11 +50,11 @@ DOCUMENTATION = """
         import_disabled:
           description: Forces importing disabled computer objects
           type: boolean
-          default: false
+          default: no
         import_computer_groups:
           description: Imports computer groups as ansible inventory host groups
           type: boolean
-          default: false
+          default: no
         import_organizational_units_as_inventory_groups:
           description: 
             - Imports organizational units as inventory groups
@@ -62,7 +62,7 @@ DOCUMENTATION = """
             - e.g. if the organizational_units list contains "OU=Devices,DC=ansible,DC=local" there would be an inventory group "Devices" containing all the computer objects.
             - Nested OU's are supported and will be created as nested inventory groups
           type: boolean
-          default: true
+          default: yes
 """
 
 EXAMPLES = """
@@ -72,6 +72,9 @@ domain_controllers:
   - dc1.ansible.local
 username: DOMAIN\\username
 password: sup3rs3cr3t
+organizational_units:
+  - dc=ansible,dc=local
+
 
 # Fetch all hosts in the active directory domain use two domain controllers
 plugin: active_directory
@@ -80,6 +83,8 @@ domain_controllers:
   - dc2.ansible.local
 username: DOMAIN\\username
 password: sup3rs3cr3t
+organizational_units:
+  - dc=ansible,dc=local
 
 # Fetch all hosts within specific organizational unit
 plugin: active_directory
@@ -91,14 +96,14 @@ organizational_units:
 username: DOMAIN\\username
 password: sup3rs3cr3t
 
-# Fetch all hosts within specific organizational unit and last login activity within given timeframe (in days)
+# Fetch all hosts within specific organizational unit and last login activity within 60 days
 plugin: active_directory
 domain_controllers:
   - dc1.ansible.local
 organizational_units:
   - ou=servers,dc=ansible,dc=local
   - ou=desktops,dc=ansible,dc=local
-last_activity: 30
+last_activity: 60
 username: DOMAIN\\username
 password: sup3rs3cr3t
 
@@ -112,6 +117,28 @@ organizational_units:
 import_disabled: true
 username: DOMAIN\\username
 password: sup3rs3cr3t
+
+# Fetch all hosts within specific organizational unit along with computer groups
+plugin: active_directory
+domain_controllers:
+  - dc1.ansible.local
+organizational_units:
+  - ou=servers,dc=ansible,dc=local
+  - ou=desktops,dc=ansible,dc=local
+username: DOMAIN\\username
+password: sup3rs3cr3t
+import_computer_groups: yes
+
+# Fetch all hosts within specific organizational unit but do not create inventory host groups using organizational unit heirarchy
+plugin: active_directory
+domain_controllers:
+  - dc1.ansible.local
+organizational_units:
+  - ou=servers,dc=ansible,dc=local
+  - ou=desktops,dc=ansible,dc=local
+username: DOMAIN\\username
+password: sup3rs3cr3t
+import_organizational_units_as_inventory_groups: no
 """
 
 import re
@@ -146,15 +173,14 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         self.domain_controllers = []
         self.use_ssl = True
         self.import_organizational_units_as_inventory_groups = True
-        self.last_activity = 30
+        self.last_activity = 90
         self.import_disabled = False
         self.import_computer_groups = False
 
     def _init_data(self):
         """
-      :param config_data: contents of the inventory config file
-      """
-        display.verbose("setting credentials")
+        :param config_data: contents of the inventory config file
+        """
         try:
             self.user_name = self.get_option("username")
         except:
@@ -201,8 +227,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     def _ldap3_conn(self):
         """
-      establishes an ldap connection and returns the connection object
-      """
+        establishes an ldap connection and returns the connection object
+        """
         display.verbose("initializing ldap connection")
         if self.user_name == None or self.user_password == None:
             raise AnsibleError("insufficient credentials found")
@@ -240,11 +266,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     def _query(self, connection, path, no_subtree=False):
         """
-      queries active directory and returns records
-      :param connection: the ldap3 connection object
-      :param path: the ldap path to query
-      :param no_subtree: limit search to path only, do not include subtree
-      """
+        queries active directory and returns records
+        :param connection: the ldap3 connection object
+        :param path: the ldap path to query
+        :param no_subtree: limit search to path only, do not include subtree
+        """
         display.verbose("running search query to find computers at path " + path)
         search_scope = BASE if no_subtree else SUBTREE
         try:
@@ -261,10 +287,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     def _get_hostname(self, entry, hostnames=None):
         """
-      :param entry: a ldap3 entry object returned by ldap3 search
-      :param hostnames: a list of hostname destination variables in order of preference
-      :return the preferred identifer for the host
-      """
+        :param entry: a ldap3 entry object returned by ldap3 search
+        :param hostnames: a list of hostname destination variables in order of preference
+        :return the preferred identifer for the host
+        """
         if not hostnames:
             hostnames = ["dNSHostName", "name"]
 
@@ -280,9 +306,9 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     def _get_safe_group_name(self, group_name):
         """
-      :param group_name: the name of ansible inventory group you need to sanitize
-      :returns the sanitized ansible inventory group name
-      """
+        :param group_name: the name of ansible inventory group you need to sanitize
+        :returns the sanitized ansible inventory group name
+        """
         sanitized_name = re.sub("-", "_", group_name)
         sanitized_name = re.sub("\\s", "_", sanitized_name)
         return sanitized_name.lower()
@@ -302,10 +328,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         self, entry_dn, search_ou
     ):
         """
-      converts an active directory computer objects distinguished name to ansible inventory group names.
-      :param entry_dn: computer object ldap entry distinguished name
-      :param search_ou: the base search organization unit that was used to retrieve the entry. all inventory groups are based off of this OU
-      """
+        converts an active directory computer objects distinguished name to ansible inventory group names.
+        :param entry_dn: computer object ldap entry distinguished name
+        :param search_ou: the base search organization unit that was used to retrieve the entry. all inventory groups are based off of this OU
+        """
         result = []
         if search_ou in entry_dn:
             display.debug("parsing %s" % entry_dn)
@@ -335,15 +361,15 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     def _populate(self, entries, organizational_unit):
         """
-      populates ansible inventory with active directory entries
-      :param entries: ldap entries list
-      """
+        populates ansible inventory with active directory entries
+        :param entries: ldap entries list
+        """
         display.debug("creating all inventory group")
         self.inventory.add_group("all")
         for entry in entries:
             display.debug("processing entry %s" % entry)
             hostname = self._get_hostname(entry)
-            # use userAccountControl flag to check if the computer is enabled or not. 
+            # use userAccountControl flag to check if the computer is enabled or not.
             # As per https://support.microsoft.com/en-us/help/305144/how-to-use-useraccountcontrol-to-manipulate-user-account-properties
             # Typical user : 0x200 (512)
             # Domain controller : 0x82000 (532480)
@@ -433,9 +459,9 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     def verify_file(self, path):
         """
-            :param loader: an ansible.parsing.dataloader.DataLoader object
-            :param path: the path to the inventory config file
-            :return the contents of the config file
+        :param loader: an ansible.parsing.dataloader.DataLoader object
+        :param path: the path to the inventory config file
+        :return the contents of the config file
         """
         if super(InventoryModule, self).verify_file(path):
             if path.endswith(("active_directory.yml", "active_directory.yaml")):
