@@ -517,7 +517,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 ou_stats = self._populate(results, organizational_unit)
                 stats[organizational_unit] = ou_stats
             
-            display.vvvv('inventory host change statistics per organizational unit:')
+            display.vvvv('inventory host change statistics:')
             for organizational_unit in organizational_units_to_search:
                 display.vvvv("OU: " + organizational_unit + " add: " + str(stats[organizational_unit]['added']) + " ignore-disabled: " + str(stats[organizational_unit]['ignore_disabled']) + " ignore-stale: " + str(stats[organizational_unit]['ignore_stale']))
         # If the cache has expired/doesn't exist or if refresh_inventory/flush cache is used
