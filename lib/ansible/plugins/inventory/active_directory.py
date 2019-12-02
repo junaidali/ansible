@@ -41,6 +41,7 @@ DOCUMENTATION = """
           description: The list of organizational units (OU's) to be searched for computer objects within the active directory domain
           type: list
           default: []
+          required: True
         last_activity:
           description:
             - This setting determines the number of days that are tolerated for a given computer to be considered active
@@ -366,6 +367,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         """
         display.debug("creating all inventory group")
         self.inventory.add_group("all")
+        stats = {
+            'added': 0,
+            'ignore_disabled': 0,
+            'ignore_stale': 0
+        }
         for entry in entries:
             display.debug("processing entry %s" % entry)
             hostname = self._get_hostname(entry)
@@ -380,6 +386,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 and self.import_disabled == False
             ):
                 display.vvvv("Ignoring %s as it is currently disabled" % (hostname))
+                stats['ignore_disabled'] = stats['ignore_disabled'] + 1
             elif (
                 "lastLogonTimestamp" in entry
                 and abs(
@@ -394,6 +401,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                     "Ignoring %s as its lastLogonTimestamp of %s is past the %d day(s) threshold"
                     % (hostname, entry["lastLogonTimestamp"], self.last_activity)
                 )
+                stats['ignore_stale'] = stats['ignore_stale'] + 1
             else:
                 organizational_unit_groups = self._get_inventory_group_names_from_computer_distinguished_name(
                     entry.entry_dn, organizational_unit
@@ -419,6 +427,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                                 "%s added to inventory group %s"
                                 % (hostname, new_group_name)
                             )
+                            stats['added'] = stats['added'] + 1
                     else:
                         if self.import_organizational_units_as_inventory_groups == True:
                             parent_group_name = self._get_safe_group_name(
@@ -443,6 +452,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                                     "%s added to inventory group %s"
                                     % (hostname, new_group_name)
                                 )
+                                stats['added'] = stats['added'] + 1
 
                 if "memberOf" in entry and self.import_computer_groups == True:
                     display.debug("processing computer groups %s" % entry["memberOf"])
@@ -456,6 +466,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                         display.vvvv(
                             "%s added to inventory group %s" % (hostname, group_name)
                         )
+        return stats
 
     def verify_file(self, path):
         """
@@ -479,6 +490,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
         self._init_data()
 
+        stats = {}
+
         organizational_units_to_search = self.get_option("organizational_units")
 
         connection = self._ldap3_conn()
@@ -501,8 +514,12 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         if not cache or cache_needs_update:
             for organizational_unit in organizational_units_to_search:
                 results = self._query(connection, organizational_unit)
-                self._populate(results, organizational_unit)
-
+                ou_stats = self._populate(results, organizational_unit)
+                stats[organizational_unit] = ou_stats
+            
+            display.vvvv('inventory host change statistics per organizational unit:')
+            for organizational_unit in organizational_units_to_search:
+                display.vvvv("OU: " + organizational_unit + " add: " + str(stats[organizational_unit]['added']) + " ignore-disabled: " + str(stats[organizational_unit]['ignore_disabled']) + " ignore-stale: " + str(stats[organizational_unit]['ignore_stale']))
         # If the cache has expired/doesn't exist or if refresh_inventory/flush cache is used
         # when the user is using caching, update the cached inventory
         if cache_needs_update or (not cache and self.get_option("cache")):
