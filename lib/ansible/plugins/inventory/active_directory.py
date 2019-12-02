@@ -47,7 +47,7 @@ DOCUMENTATION = """
             - This setting determines the number of days that are tolerated for a given computer to be considered active
             - It uses the lastLogonTimeStamp active directory attribute to determine if the computer was active within this timeframe
           type: number
-          default: 90 (days)
+          default: 90
         import_disabled:
           description: Forces importing disabled computer objects
           type: boolean
