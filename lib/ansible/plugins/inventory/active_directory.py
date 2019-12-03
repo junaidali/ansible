@@ -311,7 +311,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             except:
                 pass
 
-        return to_text(hostname)
+        return to_text(hostname.lower())
 
     def _get_safe_group_name(self, group_name):
         """
