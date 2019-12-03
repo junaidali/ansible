@@ -370,6 +370,33 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         display.debug("returning result %s" % result)
         return result
 
+    def _get_primary_group_name_from_id(self, group_id):
+        """
+        returns the group name for a given primary group id
+        :param group_id: numeric id of the active directory group
+        """
+        known_groups_dict = {
+            512: 'Domain Admins',
+            513: 'Domain Users',
+            514: 'Domain Guests',
+            515: 'Domain Computers',
+            516: 'Domain Controllers',
+            498: 'Enterprise Read-only Domain Controllers',
+            521: 'Read-only Domain Controllers',
+            517: 'Cert Publishers',
+            518: 'Schema Admins',
+            519: 'Enterprise Admins',
+            520: 'Group Policy Creator Owners',
+        }
+        result = "unknown-primary-group"
+
+        if group_id in known_groups_dict:
+            result = known_groups_dict[group_id]
+        else:
+            display.warning('could not find ' + str(group_id) + ' in well known primary groups list')
+        
+        return result
+
     def _populate(self, entry, organizational_unit):
         """
         populates ansible inventory with active directory entries
@@ -474,13 +501,19 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 computer_security_groups = self._get_inventory_group_names_from_computer_security_groups(
                     entry["attributes"]["memberOf"]
                 )
+                if "primaryGroupID" in entry["attributes"]:
+                    display.debug('checking for primary group id')
+                    computer_security_groups.append(self._get_primary_group_name_from_id(entry["attributes"]["primaryGroupID"]))
+                
                 for computer_security_group in computer_security_groups:
                     group_name = self._get_safe_group_name(computer_security_group)
                     group_added_name = self.inventory.add_group(group_name)
                     self.inventory.add_child(group=group_added_name, child=hostname)
                     display.debug(
-                        "%s added to inventory group %s" % (hostname, group_name)
+                        "%s added to inventory group %s"
+                        % (hostname, group_name)
                     )
+
         return return_state
 
     def verify_file(self, path):
