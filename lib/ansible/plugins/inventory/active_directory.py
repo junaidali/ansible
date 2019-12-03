@@ -364,7 +364,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 count += 1
         else:
             raise AnsibleError("%s does not exists in %s" % (search_ou, entry_dn))
-        
+
         sub_ous.reverse()
         result = result + sub_ous
         display.debug("returning result %s" % result)
@@ -408,7 +408,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         ):
             display.vvvv(
                 "Ignoring %s as its lastLogonTimestamp of %s is past the %d day(s) threshold"
-                % (hostname, entry["attributes"]["lastLogonTimestamp"], self.last_activity)
+                % (
+                    hostname,
+                    entry["attributes"]["lastLogonTimestamp"],
+                    self.last_activity,
+                )
             )
             return_state = "ignore_stale"
         else:
@@ -460,8 +464,13 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                             )
                             return_state = "added"
 
-            if "memberOf" in entry["attributes"] and self.import_computer_groups == True:
-                display.debug("processing computer groups %s" % entry["attributes"]["memberOf"])
+            if (
+                "memberOf" in entry["attributes"]
+                and self.import_computer_groups == True
+            ):
+                display.debug(
+                    "processing computer groups %s" % entry["attributes"]["memberOf"]
+                )
                 computer_security_groups = self._get_inventory_group_names_from_computer_security_groups(
                     entry["attributes"]["memberOf"]
                 )
