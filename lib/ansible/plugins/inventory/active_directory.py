@@ -491,9 +491,16 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                             )
                             return_state = "added"
 
-            primary_group = []
-            if "primaryGroupID" in entry["attributes"]:
-                primary_group.append(self._get_primary_group_name_from_id(entry["attributes"]["primaryGroupID"]))
+            
+            if "primaryGroupID" in entry["attributes"] and self.import_computer_groups == True:
+                primary_group = self._get_primary_group_name_from_id(entry["attributes"]["primaryGroupID"])
+                group_name = self._get_safe_group_name(primary_group)
+                group_added_name = self.inventory.add_group(group_name)
+                self.inventory.add_child(group=group_added_name, child=hostname)
+                display.vvvv(
+                    "%s added to security group based inventory group %s"
+                    % (hostname, group_name)
+                )
                 
             if (
                 "memberOf" in entry["attributes"]
@@ -505,7 +512,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 computer_security_groups = self._get_inventory_group_names_from_computer_security_groups(
                     entry["attributes"]["memberOf"]
                 )
-                computer_security_groups = computer_security_groups + primary_group
                 for computer_security_group in computer_security_groups:
                     group_name = self._get_safe_group_name(computer_security_group)
                     group_added_name = self.inventory.add_group(group_name)
