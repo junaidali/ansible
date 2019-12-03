@@ -406,7 +406,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         ):
             display.vvvv(
                 "Ignoring %s as its lastLogonTimestamp of %s is past the %d day(s) threshold"
-                % (hostname, entry["lastLogonTimestamp"], self.last_activity)
+                % (hostname, entry["attributes"]["lastLogonTimestamp"], self.last_activity)
             )
             return_state = "ignore_stale"
         else:
@@ -458,10 +458,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                             )
                             return_state = "added"
 
-            if "memberOf" in entry and self.import_computer_groups == True:
-                display.debug("processing computer groups %s" % entry["memberOf"])
+            if "memberOf" in entry["attributes"] and self.import_computer_groups == True:
+                display.debug("processing computer groups %s" % entry["attributes"]["memberOf"])
                 computer_security_groups = self._get_inventory_group_names_from_computer_security_groups(
-                    entry["memberOf"]
+                    entry["attributes"]["memberOf"]
                 )
                 for computer_security_group in computer_security_groups:
                     group_name = self._get_safe_group_name(computer_security_group)
