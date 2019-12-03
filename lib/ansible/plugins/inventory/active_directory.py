@@ -502,7 +502,6 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                     entry["attributes"]["memberOf"]
                 )
                 if "primaryGroupID" in entry["attributes"]:
-                    display.debug('checking for primary group id')
                     computer_security_groups.append(self._get_primary_group_name_from_id(entry["attributes"]["primaryGroupID"]))
                 
                 for computer_security_group in computer_security_groups:
