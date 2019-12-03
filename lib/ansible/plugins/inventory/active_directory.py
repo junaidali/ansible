@@ -508,7 +508,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                     group_name = self._get_safe_group_name(computer_security_group)
                     group_added_name = self.inventory.add_group(group_name)
                     self.inventory.add_child(group=group_added_name, child=hostname)
-                    display.debug(
+                    display.vvvv(
                         "%s added to inventory group %s"
                         % (hostname, group_name)
                     )
