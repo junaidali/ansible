@@ -290,7 +290,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         for entry in entry_generator:
             display.debug("processing entry for yield " + str(entry))
             if entry["type"] == "searchResEntry":
-                if "msDS-ManagedServiceAccount" not in entry["attributes"]["objectClass"]:
+                if "msDS-GroupManagedServiceAccount" not in entry["attributes"]["objectClass"]:
                     yield entry
                 else:
                     display.warning("skipping managed service account " + str(entry["dn"]))
