@@ -177,6 +177,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         self.last_activity = 90
         self.import_disabled = False
         self.import_computer_groups = False
+        self.query_page_size = 1000
 
     def _init_data(self):
         """
@@ -267,24 +268,31 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     def _query(self, connection, path, no_subtree=False):
         """
-        queries active directory and returns records
+        queries active directory and returns records using a generator
         :param connection: the ldap3 connection object
         :param path: the ldap path to query
         :param no_subtree: limit search to path only, do not include subtree
         """
+
         display.verbose("running search query to find computers at path " + path)
         search_scope = BASE if no_subtree else SUBTREE
         try:
-            connection.search(
+            entry_generator = connection.extend.standard.paged_search(
                 search_base=path,
                 search_filter="(objectclass=computer)",
                 attributes=ALL_ATTRIBUTES,
                 search_scope=search_scope,
+                paged_size=self.query_page_size,
             )
         except LDAPException as err:
             raise AnsibleError("could not retrieve computer objects %s", err)
-        display.verbose("total " + str(len(connection.response)) + " entries retrieved")
-        return connection.entries
+
+        for entry in entry_generator:
+            display.debug("processing entry for yield " + str(entry))
+            if entry["type"] == "searchResEntry":
+                yield entry
+            else:
+                display.warning("could not yield " + str(entry))
 
     def _get_hostname(self, entry, hostnames=None):
         """
@@ -295,10 +303,10 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         if not hostnames:
             hostnames = ["dNSHostName", "name"]
 
-        hostname = None
+        hostname = ""
         for preference in hostnames:
             try:
-                hostname = entry[preference]
+                hostname = entry["attributes"][preference]
                 break
             except:
                 pass
@@ -360,113 +368,109 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         display.debug("returning result %s" % result)
         return result
 
-    def _populate(self, entries, organizational_unit):
+    def _populate(self, entry, organizational_unit):
         """
         populates ansible inventory with active directory entries
         :param entries: ldap entries list
         """
-        display.debug("creating all inventory group")
-        self.inventory.add_group("all")
-        stats = {
-            'added': 0,
-            'ignore_disabled': 0,
-            'ignore_stale': 0
-        }
-        for entry in entries:
-            display.debug("processing entry %s" % entry)
-            hostname = self._get_hostname(entry)
-            # use userAccountControl flag to check if the computer is enabled or not.
-            # As per https://support.microsoft.com/en-us/help/305144/how-to-use-useraccountcontrol-to-manipulate-user-account-properties
-            # Typical user : 0x200 (512)
-            # Domain controller : 0x82000 (532480)
-            # Workstation/server: 0x1000 (4096)
-            # ACCOUNTDISABLE: 0x0002 (2)
-            if (
-                entry["userAccountControl"] in [4098, 532482]
-                and self.import_disabled == False
-            ):
-                display.vvvv("Ignoring %s as it is currently disabled" % (hostname))
-                stats['ignore_disabled'] = stats['ignore_disabled'] + 1
-            elif (
-                "lastLogonTimestamp" in entry
-                and abs(
-                    (
-                        datetime.now(timezone.utc)
-                        - entry["lastLogonTimestamp"].values[0]
-                    ).days
-                )
-                > self.last_activity
-            ):
-                display.vvvv(
-                    "Ignoring %s as its lastLogonTimestamp of %s is past the %d day(s) threshold"
-                    % (hostname, entry["lastLogonTimestamp"], self.last_activity)
-                )
-                stats['ignore_stale'] = stats['ignore_stale'] + 1
-            else:
-                organizational_unit_groups = self._get_inventory_group_names_from_computer_distinguished_name(
-                    entry.entry_dn, organizational_unit
-                )
-                for count, group in enumerate(organizational_unit_groups, start=0):
-                    display.debug("%d. processing group %s" % (count, group))
-                    new_group_name = ""
-                    if count == 0:
-                        parent_group_name = self._get_safe_group_name(
-                            organizational_unit_groups[0]
+        return_state = ""
+        display.debug(
+            "processing entry (_populate)"
+            + str(entry)
+            + " with ou "
+            + organizational_unit
+        )
+        hostname = self._get_hostname(entry)
+        # use userAccountControl flag to check if the computer is enabled or not.
+        # As per https://support.microsoft.com/en-us/help/305144/how-to-use-useraccountcontrol-to-manipulate-user-account-properties
+        # Typical user : 0x200 (512)
+        # Domain controller : 0x82000 (532480)
+        # Workstation/server: 0x1000 (4096)
+        # ACCOUNTDISABLE: 0x0002 (2)
+        if (
+            "userAccountControl" in entry["attributes"]
+            and entry["attributes"]["userAccountControl"] in [4098, 532482]
+            and self.import_disabled == False
+        ):
+            display.vvvv("Ignoring %s as it is currently disabled" % (hostname))
+            return_state = "ignore_disabled"
+        elif (
+            "lastLogonTimestamp" in entry["attributes"]
+            and abs(
+                (
+                    datetime.now(timezone.utc)
+                    - entry["attributes"]["lastLogonTimestamp"]
+                ).days
+            )
+            > self.last_activity
+        ):
+            display.vvvv(
+                "Ignoring %s as its lastLogonTimestamp of %s is past the %d day(s) threshold"
+                % (hostname, entry["lastLogonTimestamp"], self.last_activity)
+            )
+            return_state = "ignore_stale"
+        else:
+            organizational_unit_groups = self._get_inventory_group_names_from_computer_distinguished_name(
+                entry["dn"], organizational_unit
+            )
+            for count, group in enumerate(organizational_unit_groups, start=0):
+                display.debug("%d. processing group %s" % (count, group))
+                new_group_name = ""
+                if count == 0:
+                    parent_group_name = self._get_safe_group_name(
+                        organizational_unit_groups[0]
+                    )
+                    display.debug("adding group %s under all" % (parent_group_name))
+                    self.inventory.add_group(parent_group_name)
+                    self.inventory.add_child("all", parent_group_name)
+                    new_group_name = parent_group_name
+                    if (
+                        self.import_organizational_units_as_inventory_groups == False
+                        or len(organizational_unit_groups) == 1
+                    ):
+                        self.inventory.add_host(hostname, group=new_group_name)
+                        display.vvvv(
+                            "%s added to inventory group %s"
+                            % (hostname, new_group_name)
                         )
-                        display.debug("adding group %s under all" % (parent_group_name))
-                        self.inventory.add_group(parent_group_name)
-                        self.inventory.add_child("all", parent_group_name)
-                        new_group_name = parent_group_name
-                        if (
-                            self.import_organizational_units_as_inventory_groups
-                            == False
-                            or len(organizational_unit_groups) == 1
-                        ):
+                        return_state = "added"
+                else:
+                    if self.import_organizational_units_as_inventory_groups == True:
+                        parent_group_name = self._get_safe_group_name(
+                            "-".join(organizational_unit_groups[0:count])
+                        )
+                        display.debug("creating parent group %s" % parent_group_name)
+                        new_group_name = self._get_safe_group_name(
+                            parent_group_name + "_" + group
+                        )
+                        display.debug(
+                            "adding %s to %s" % (new_group_name, parent_group_name)
+                        )
+                        self.inventory.add_group(new_group_name)
+                        self.inventory.add_child(parent_group_name, new_group_name)
+
+                        # add host to leaf ou
+                        if count == len(organizational_unit_groups) - 1:
                             self.inventory.add_host(hostname, group=new_group_name)
                             display.vvvv(
                                 "%s added to inventory group %s"
                                 % (hostname, new_group_name)
                             )
-                            stats['added'] = stats['added'] + 1
-                    else:
-                        if self.import_organizational_units_as_inventory_groups == True:
-                            parent_group_name = self._get_safe_group_name(
-                                "-".join(organizational_unit_groups[0:count])
-                            )
-                            display.debug(
-                                "creating parent group %s" % parent_group_name
-                            )
-                            new_group_name = self._get_safe_group_name(
-                                parent_group_name + "_" + group
-                            )
-                            display.debug(
-                                "adding %s to %s" % (new_group_name, parent_group_name)
-                            )
-                            self.inventory.add_group(new_group_name)
-                            self.inventory.add_child(parent_group_name, new_group_name)
+                            return_state = "added"
 
-                            # add host to leaf ou
-                            if count == len(organizational_unit_groups) - 1:
-                                self.inventory.add_host(hostname, group=new_group_name)
-                                display.vvvv(
-                                    "%s added to inventory group %s"
-                                    % (hostname, new_group_name)
-                                )
-                                stats['added'] = stats['added'] + 1
-
-                if "memberOf" in entry and self.import_computer_groups == True:
-                    display.debug("processing computer groups %s" % entry["memberOf"])
-                    computer_security_groups = self._get_inventory_group_names_from_computer_security_groups(
-                        entry["memberOf"]
+            if "memberOf" in entry and self.import_computer_groups == True:
+                display.debug("processing computer groups %s" % entry["memberOf"])
+                computer_security_groups = self._get_inventory_group_names_from_computer_security_groups(
+                    entry["memberOf"]
+                )
+                for computer_security_group in computer_security_groups:
+                    group_name = self._get_safe_group_name(computer_security_group)
+                    group_added_name = self.inventory.add_group(group_name)
+                    self.inventory.add_child(group=group_added_name, child=hostname)
+                    display.debug(
+                        "%s added to inventory group %s" % (hostname, group_name)
                     )
-                    for computer_security_group in computer_security_groups:
-                        group_name = self._get_safe_group_name(computer_security_group)
-                        group_added_name = self.inventory.add_group(group_name)
-                        self.inventory.add_child(group=group_added_name, child=hostname)
-                        display.vvvv(
-                            "%s added to inventory group %s" % (hostname, group_name)
-                        )
-        return stats
+        return return_state
 
     def verify_file(self, path):
         """
@@ -512,14 +516,43 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 cache_needs_update = True
 
         if not cache or cache_needs_update:
-            for organizational_unit in organizational_units_to_search:
-                results = self._query(connection, organizational_unit)
-                ou_stats = self._populate(results, organizational_unit)
-                stats[organizational_unit] = ou_stats
-            
-            display.vvvv('inventory host change statistics:')
-            for organizational_unit in organizational_units_to_search:
-                display.vvvv("OU: " + organizational_unit + " add: " + str(stats[organizational_unit]['added']) + " ignore-disabled: " + str(stats[organizational_unit]['ignore_disabled']) + " ignore-stale: " + str(stats[organizational_unit]['ignore_stale']))
+            if isinstance(organizational_units_to_search, list):
+                display.debug("creating all inventory group")
+                self.inventory.add_group("all")
+                for organizational_unit in organizational_units_to_search:
+                    ou_stats = {
+                        "added": 0,
+                        "ignore_disabled": 0,
+                        "ignore_stale": 0,
+                        "unknown": 0,
+                    }
+                    count = 0
+                    for entry in self._query(connection, organizational_unit):
+                        return_state = self._populate(entry, organizational_unit)
+                        if return_state == "added":
+                            ou_stats["added"] = ou_stats["added"] + 1
+                        elif return_state == "ignore_disabled":
+                            ou_stats["ignore_disabled"] = (
+                                ou_stats["ignore_disabled"] + 1
+                            )
+                        elif return_state == "ignore_stale":
+                            ou_stats["ignore_stale"] = ou_stats["ignore_stale"] + 1
+                        else:
+                            ou_stats["unknown"] = ou_stats["unknown"] + 1
+                    stats[organizational_unit] = ou_stats
+
+                display.vvvv("inventory host change statistics:")
+                for organizational_unit in organizational_units_to_search:
+                    display.vvvv(
+                        "OU: "
+                        + organizational_unit
+                        + " add: "
+                        + str(stats[organizational_unit]["added"])
+                        + " ignore-disabled: "
+                        + str(stats[organizational_unit]["ignore_disabled"])
+                        + " ignore-stale: "
+                        + str(stats[organizational_unit]["ignore_stale"])
+                    )
         # If the cache has expired/doesn't exist or if refresh_inventory/flush cache is used
         # when the user is using caching, update the cached inventory
         if cache_needs_update or (not cache and self.get_option("cache")):
