@@ -342,6 +342,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         :param search_ou: the base search organization unit that was used to retrieve the entry. all inventory groups are based off of this OU
         """
         result = []
+        sub_ous = []
         if search_ou in entry_dn:
             display.debug("parsing %s" % entry_dn)
             if not re.match("^DC=", search_ou):
@@ -355,7 +356,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                     display.debug("ignoring object %s in group name calculation" % node)
                 else:
                     if "=" in node:
-                        result.append(to_text(node.split("=")[1]))
+                        sub_ous.append(to_text(node.split("=")[1]))
                     else:
                         display.warning(
                             "node %s cannot be split to get inventory group name" % node
@@ -363,8 +364,9 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 count += 1
         else:
             raise AnsibleError("%s does not exists in %s" % (search_ou, entry_dn))
-        if re.match("^DC=", search_ou):
-            result.reverse()
+        
+        sub_ous.reverse()
+        result = result + sub_ous
         display.debug("returning result %s" % result)
         return result
 
