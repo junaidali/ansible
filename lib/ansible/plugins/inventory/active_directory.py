@@ -13,7 +13,6 @@ DOCUMENTATION = """
         - ldap3
     extends_documentation_fragment:
         - inventory_cache
-        - constructed
     description:
         - Get inventory hosts from Active Directory
         - Uses a YAML configuration file that ends with C(active_directory.(yml|yaml)).
