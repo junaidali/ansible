@@ -125,61 +125,65 @@ def test_loading_computer_objects_from_domain_controllers_organizational_unit(
 
 
 def test_computer_object_inventory_hostname_should_default_to_dns_hostname_attribute(
-    inventory, domain_controller_computer_object
+    inventory, connection
 ):
-    assert (
-        inventory._get_hostname(domain_controller_computer_object, hostnames=None)
-        == "dc.ansible.local"
+    dc_entries = inventory._query(
+        connection, "OU=Domain Controllers,DC=ansible,DC=local"
     )
+    all_dcs = []
+    for entry in dc_entries:
+        all_dcs.append(entry)
+        assert inventory._get_hostname(entry, hostnames=None) == "dc.ansible.local"
 
 
-def test_computer_object_inventory_hostname_using_name_attribute(
-    inventory, domain_controller_computer_object
-):
-    assert (
-        inventory._get_hostname(domain_controller_computer_object, hostnames=["name"])
-        == "DC"
+def test_computer_object_inventory_hostname_using_name_attribute(inventory, connection):
+    dc_entries = inventory._query(
+        connection, "OU=Domain Controllers,DC=ansible,DC=local"
     )
+    all_dcs = []
+    for entry in dc_entries:
+        all_dcs.append(entry)
+        assert inventory._get_hostname(entry, hostnames=["name"]) == "dc"
 
 
 def test_query_domain_controllers_organizational_unit(inventory, connection):
-    assert (
-        len(inventory._query(connection, "OU=Domain Controllers,DC=ansible,DC=local"))
-        == 1
+    dc_entries = inventory._query(
+        connection, "OU=Domain Controllers,DC=ansible,DC=local"
     )
+    all_dcs = []
+    for entry in dc_entries:
+        all_dcs.append(entry)
+    assert len(all_dcs) == 1
 
 
 def test_query_invalid_path_should_raise_error(inventory, connection):
-    with pytest.raises(AnsibleError) as error_message:
+
+    try:
         inventory._query(connection=connection, path="UNKNOWN-PATH")
-        assert "could not retrieve computer objects" in error_message
+    except AnsibleError as err:
+        assert "could not retrieve computer objects" in err
 
 
 def test_loading_computer_objects_using_simple_organizational_unit(
     inventory, connection
 ):
-    assert (
-        len(
-            inventory._query(
-                connection=connection,
-                path="OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local",
-            )
-        )
-        == 5
+    entries = inventory._query(
+        connection, "OU=servers-ou-1,OU=Servers,OU=Devices,DC=ansible,DC=local"
     )
+    all_computers = []
+    for entry in entries:
+        all_computers.append(entry)
+    assert len(all_computers) == 5
 
 
 def test_loading_computer_objects_using_nested_organizational_unit(
     inventory, connection
 ):
-    assert (
-        len(
-            inventory._query(
-                connection=connection, path="OU=Servers,OU=Devices,DC=ansible,DC=local"
-            )
-        )
-        == 25
-    )
+    entries = inventory._query(connection, "OU=Servers,OU=Devices,DC=ansible,DC=local")
+    all_computers = []
+    for entry in entries:
+        all_computers.append(entry)
+    assert len(all_computers) == 25
 
 
 def test_get_safe_group_name_with_dashes(inventory):

@@ -290,10 +290,15 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         for entry in entry_generator:
             display.debug("processing entry for yield " + str(entry))
             if entry["type"] == "searchResEntry":
-                if "msDS-GroupManagedServiceAccount" not in entry["attributes"]["objectClass"]:
+                if (
+                    "msDS-GroupManagedServiceAccount"
+                    not in entry["attributes"]["objectClass"]
+                ):
                     yield entry
                 else:
-                    display.warning("skipping managed service account " + str(entry["dn"]))
+                    display.warning(
+                        "skipping managed service account " + str(entry["dn"])
+                    )
             else:
                 display.warning("could not yield " + str(entry))
 
@@ -379,25 +384,27 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         :param group_id: numeric id of the active directory group
         """
         known_groups_dict = {
-            512: 'Domain Admins',
-            513: 'Domain Users',
-            514: 'Domain Guests',
-            515: 'Domain Computers',
-            516: 'Domain Controllers',
-            498: 'Enterprise Read-only Domain Controllers',
-            521: 'Read-only Domain Controllers',
-            517: 'Cert Publishers',
-            518: 'Schema Admins',
-            519: 'Enterprise Admins',
-            520: 'Group Policy Creator Owners',
+            512: "Domain Admins",
+            513: "Domain Users",
+            514: "Domain Guests",
+            515: "Domain Computers",
+            516: "Domain Controllers",
+            498: "Enterprise Read-only Domain Controllers",
+            521: "Read-only Domain Controllers",
+            517: "Cert Publishers",
+            518: "Schema Admins",
+            519: "Enterprise Admins",
+            520: "Group Policy Creator Owners",
         }
         result = "unknown-primary-group"
 
         if group_id in known_groups_dict:
             result = known_groups_dict[group_id]
         else:
-            display.warning('could not find ' + str(group_id) + ' in well known primary groups list')
-        
+            display.warning(
+                "could not find " + str(group_id) + " in well known primary groups list"
+            )
+
         return result
 
     def _populate(self, entry, organizational_unit):
@@ -494,9 +501,13 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                             )
                             return_state = "added"
 
-            
-            if "primaryGroupID" in entry["attributes"] and self.import_computer_groups == True:
-                primary_group = self._get_primary_group_name_from_id(entry["attributes"]["primaryGroupID"])
+            if (
+                "primaryGroupID" in entry["attributes"]
+                and self.import_computer_groups == True
+            ):
+                primary_group = self._get_primary_group_name_from_id(
+                    entry["attributes"]["primaryGroupID"]
+                )
                 group_name = self._get_safe_group_name(primary_group)
                 group_added_name = self.inventory.add_group(group_name)
                 self.inventory.add_child(group=group_added_name, child=hostname)
@@ -504,7 +515,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                     "%s added to security group based inventory group %s"
                     % (hostname, group_name)
                 )
-                
+
             if (
                 "memberOf" in entry["attributes"]
                 and self.import_computer_groups == True
