@@ -24,7 +24,9 @@ DOCUMENTATION = """
           type: string
           required: True
         password:
-          description: The active directory user's password used for querying computer objects
+          description: 
+            - The active directory user's password used for querying computer objects
+            - It is recommended to use ansible vault to keep the password secret since ansible-inventory command supports ansible vault
           type: string
           required: True
         use_ssl: 
@@ -141,7 +143,7 @@ password: sup3rs3cr3t
 import_organizational_units_as_inventory_groups: no
 """
 
-import re
+from re import sub, match
 from datetime import datetime, timezone
 
 from ansible.errors import AnsibleError
@@ -325,8 +327,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         :param group_name: the name of ansible inventory group you need to sanitize
         :returns the sanitized ansible inventory group name
         """
-        sanitized_name = re.sub("-", "_", group_name)
-        sanitized_name = re.sub("\\s", "_", sanitized_name)
+        sanitized_name = sub("-", "_", group_name)
+        sanitized_name = sub("\\s", "_", sanitized_name)
         return sanitized_name.lower()
 
     def _get_inventory_group_names_from_computer_security_groups(self, security_groups):
@@ -352,7 +354,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         sub_ous = []
         if search_ou in entry_dn:
             display.debug("parsing %s" % entry_dn)
-            if not re.match("^DC=", search_ou):
+            if not match("^DC=", search_ou):
                 parent_group = search_ou.split(",")[0].split("=")[1]
                 result.append(to_text(parent_group))
             dn_without_search_ou = entry_dn.split(search_ou)[0].strip(",")
